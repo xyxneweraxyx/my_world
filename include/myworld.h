@@ -33,7 +33,7 @@ typedef struct csfml {
 typedef struct main {
     csfml_t csfml;
     size_t **height;
-} main_t
+} main_t;
 
 // Functions
 

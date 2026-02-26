@@ -7,17 +7,7 @@
 
 #include "./../include/myworld.h"
 
-static void process_events(sfRenderWindow *window)
-{   
-    sfEvent event;
-
-    while (sfRenderWindow_pollEvent(window, &event)) {
-        if (event.type == sfEvtClosed)
-            sfRenderWindow_close(window);
-    }
-}
-
-static void draw(sfRenderWindow *window)
+/*static void draw(sfRenderWindow *window)
 {
     sfVertexArray *array = sfVertexArray_create();
 
@@ -34,18 +24,4 @@ static void draw(sfRenderWindow *window)
     }
     sfRenderWindow_drawVertexArray(window, array, NULL);
     sfVertexArray_destroy(array);
-}
-
-int main(int argc, char **argv)
-{
-    c_alloc_t *alloc_main = c_ini((uint16_t)100);
-    sfRenderWindow *window = sfRenderWindow_create((sfVideoMode){800, 600, 4}, "My World", sfClose, NULL);
-
-    while (sfRenderWindow_isOpen(window)) {
-        sfRenderWindow_clear(window, sfBlack);
-        process_events(window);
-        draw(window);
-        sfRenderWindow_display(window);
-    }
-    return 0;
-}
+}*/
