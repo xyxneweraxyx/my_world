@@ -1,0 +1,14 @@
+FINIR LA LIB SETFML :
+- Il faut continuer setfml_start pour qu'il entre une loop principale qui exécute toutes les fonctions une par une
+- Ensuite on créer le système de callbacks vu que toutes les listes chainées sont déjà bien initialisées
+- Ensuite, on fait setfml sprite et texture qui seront relativement simples a faire
+
+- Ensuite, quand setfml est fini, on commence à coder la lib de boutons
+- Le but de la lib de boutons est d'utiliser setfml mais d'être un peu extérieure, càd
+- qu'on va passer un setfml en argument pour créer un bouton ce qui permet de connecter les callbacks du bouton sur setfml instantanément
+- fonctions pour créer, afficher, cacher un bouton, callbacks à donner "onhover", "onunhover", "onclick"
+
+- ensuite, une fois la lib de boutons fini, on commence le vrai myworld, qui impliquera de créer un env csfml
+- puis de créer l'environnement de la data (les points à afficher)
+- puis de créer tout les boutons
+- puis de créer la caméra et de coder son affichage
