@@ -7,9 +7,6 @@
 
 #ifndef SET_FML
     #define SET_FML
-    
-    // Posix compliance (somehow)
-    #define _POSIX_C_SOURCE 199309L
 
     // Includes
     #include <time.h>
@@ -30,18 +27,25 @@
     #define BUFF_SPRITE_NAME 32
     #define BUFF_TEXT_NAME 32
     #define BUFF_TEXT_PATH 128
+
+    // Time definitions
+    #define SEC_TO_NANO 1000000000
+    #define SEC_TO_MICRO 1000000
+    #define SEC_TO_MILLI 1000
+    #define MILLI_TO_MICRO 1000
+    #define MILLI_TO_NANO 1000000
+    #define MICRO_TO_NANO 1000
     
     // Hardcoded values
     #define C_ALLOC_BASE 512
-    #define NANO_TO_SEC 1000000000
 
 // Enums
 
 typedef enum loop {
-    EVENT,
-    DATA,
-    RENDER,
-    DRAW
+    LOOP_EVENT,
+    LOOP_DATA,
+    LOOP_RENDER,
+    LOOP_DRAW
 } loop_t;
 
 // Typedefs
@@ -56,10 +60,10 @@ typedef struct window_params {
 } window_params_t;
 
 typedef struct time_params {
-    size_t event;
-    size_t data;
-    size_t render;
-    size_t draw;
+    size_t event; // In nanoseconds
+    size_t data; // In nanoseconds
+    size_t render; // In nanoseconds
+    size_t draw; // In nanoseconds
 } time_params_t;
 
 typedef struct time_elapsed {
@@ -133,9 +137,17 @@ size_t setfml_spriteDel(char name[BUFF_SPRITE_NAME]);
 size_t setfml_textureAdd(char name[BUFF_TEXT_NAME], char path[BUFF_TEXT_PATH]);
 size_t setfml_textureDel(char name[BUFF_TEXT_NAME]);
 
-size_t setfml_add(loop_t event, size_t (*callback)(setfml_t *setfml));
-size_t setfml_del(loop_t event, size_t (*callback)(setfml_t *setfml));
-size_t setfml_pause(loop_t event, size_t (*callback)(setfml_t *setfml));
-size_t setfml_resume(loop_t event, size_t (*callback)(setfml_t *setfml));
+size_t setfml_add(loop_t event, char name[BUFF_FUNC_NAME],
+    size_t (*callback)(setfml_t *setfml));
+size_t setfml_del(char name[BUFF_FUNC_NAME]);
+size_t setfml_pause(char name[BUFF_FUNC_NAME]);
+size_t setfml_resume(char name[BUFF_FUNC_NAME]);
+
+size_t setfml_eventAdd(setfml_t *setfml, sfEventType event,
+    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+size_t setfml_eventRemove(setfml_t *setfml, char name[BUFF_FUNC_NAME]);
+
+function_t *setfml_getFunctionByName(setfml_t *setfml,
+    char name[BUFF_FUNC_NAME]);
 
 #endif

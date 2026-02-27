@@ -52,7 +52,7 @@ node_t *linkedlist_newnode(void *data);
 /*
 Inserts a node object as the new head of the list.
 */
-size_t linkedlist_inserthead(linkedlist_t *linkedlist, node_t *node);
+size_t linkedlist_insertHead(linkedlist_t *linkedlist, node_t *node);
 
 /*
 Inserts a node object in the list after the first successful comparison.
@@ -71,7 +71,7 @@ size_t linkedlist_remove(linkedlist_t *linkedlist,
 Removes all node objects in the list that match the comparison function.
 Returns the total amount of removed objects, or LINKED_FAIL on error.
 */
-size_t linkedlist_massremove(linkedlist_t *linkedlist,
+size_t linkedlist_massRemove(linkedlist_t *linkedlist,
     bool (*comp)(node_t *node), bool delete_data);
 
 #endif
