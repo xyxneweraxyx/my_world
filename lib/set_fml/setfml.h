@@ -7,8 +7,12 @@
 
 #ifndef SET_FML
     #define SET_FML
+    
+    // Posix compliance (somehow)
+    #define _POSIX_C_SOURCE 199309L
 
     // Includes
+    #include <time.h>
     #include <SFML/Audio.h>
     #include <SFML/Config.h>
     #include <SFML/Graphics.h>
@@ -29,6 +33,7 @@
     
     // Hardcoded values
     #define C_ALLOC_BASE 512
+    #define NANO_TO_SEC 1000000000
 
 // Enums
 
@@ -41,19 +46,46 @@ typedef enum loop {
 
 // Typedefs
 
-typedef struct params {
+typedef struct window_params {
     const char *title;
     sfContextSettings *settings;
     uint16_t min_scr_res[2];
     uint16_t max_scr_res[2];
     sfUint32 style;
     uint8_t fps;
+} window_params_t;
+
+typedef struct time_params {
+    size_t event;
+    size_t data;
+    size_t render;
+    size_t draw;
+} time_params_t;
+
+typedef struct time_elapsed {
+    struct timespec event;
+    struct timespec data;
+    struct timespec render;
+    struct timespec draw;
+} time_elapsed_t;
+
+typedef struct loop_exec {
+    bool event;
+    bool data;
+    bool render;
+    bool draw;
+} loop_exec_t;
+
+typedef struct params {
+    window_params_t window;
+    time_params_t time;
 } params_t;
 
 typedef struct state {
     uint32_t frame;
-    loop_t current_loop;
-    size_t min_delay;
+    time_elapsed_t time_elapsed;
+    time_elapsed_t last_exec;
+    loop_exec_t to_exec;
 } state_t;
 
 typedef struct texture {
@@ -71,12 +103,12 @@ typedef struct sprite {
 typedef struct setfml {
     c_alloc_t *alloc;
     sfRenderWindow *window;
-    void *userdata; // par exemple pour moi ça serait l'addresse de mon main
-    params_t params;
-    state_t state;
     linkedlist_t *sprites;
     linkedlist_t *textures;
     linkedlist_t *functions[4];
+    void *userdata; // par exemple pour moi ça serait l'addresse de mon main
+    params_t params;
+    state_t state;
 } setfml_t;
 
 typedef struct function {
@@ -89,6 +121,7 @@ typedef struct function {
 // Functions
 setfml_t *setfml_ini(void *userdata);
 size_t setfml_destroy(setfml_t *setfml);
+void setfml_fillparams(setfml_t *setfml);
 
 size_t setfml_windowCreate(setfml_t *setfml);
 size_t setfml_windowStart(setfml_t *setfml);

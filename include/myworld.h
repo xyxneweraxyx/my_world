@@ -8,11 +8,15 @@
     #include <stdint.h>
     #include <stdlib.h>
     #include <unistd.h>
+
+    // Includes (CSFML)
     #include <SFML/Audio.h>
     #include <SFML/Config.h>
     #include <SFML/Graphics.h>
     #include <SFML/System.h>
     #include <SFML/Window.h>
+
+    // Includes (Libs)
     #include "./../lib/c_alloc/c_alloc.h"
     #include "./../lib/set_fml/setfml.h"
 

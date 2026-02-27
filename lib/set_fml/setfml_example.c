@@ -5,18 +5,6 @@ typedef struct myworld {
     int random_number;
 } myworld_t;
 
-void configure(setfml_t *setfml)
-{
-    setfml->params.fps = (uint8_t)60;
-    setfml->params.max_scr_res[0] = (uint16_t)1920;
-    setfml->params.max_scr_res[1] = (uint16_t)1080;
-    setfml->params.min_scr_res[0] = (uint16_t)800;
-    setfml->params.min_scr_res[1] = (uint16_t)600;
-    setfml->params.settings = NULL;
-    setfml->params.title = "Ceci est un example";
-    setfml->params.style = sfClose;
-}
-
 int main(void)
 {
     c_alloc_t *alloc = c_ini((uint16_t)5);
@@ -29,7 +17,9 @@ int main(void)
     if (!myworld)
         return 84;
     setfml = setfml_ini((void *)myworld);
-    configure(setfml);
+    if (!setfml)
+        return 84;
+    setfml_fillparams(setfml);
     setfml_windowCreate(setfml);
     setfml_windowStart(setfml);
     setfml_destroy(setfml);

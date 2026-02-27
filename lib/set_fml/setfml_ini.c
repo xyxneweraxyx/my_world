@@ -7,6 +7,24 @@
 
 #include "./setfml.h"
 
+void setfml_fillparams(setfml_t *setfml)
+{
+    if (!setfml)
+        return;
+    setfml->params.window.fps = (uint8_t)60;
+    setfml->params.window.max_scr_res[0] = (uint16_t)1920;
+    setfml->params.window.max_scr_res[1] = (uint16_t)1080;
+    setfml->params.window.min_scr_res[0] = (uint16_t)800;
+    setfml->params.window.min_scr_res[1] = (uint16_t)600;
+    setfml->params.window.settings = NULL;
+    setfml->params.window.title = "My title";
+    setfml->params.window.style = sfClose;
+    setfml->params.time.event = 0;
+    setfml->params.time.draw = 0;
+    setfml->params.time.data = 100;
+    setfml->params.time.render = 0;
+}
+
 setfml_t *setfml_ini(void *userdata)
 {
     c_alloc_t *alloc = c_ini((uint16_t)C_ALLOC_BASE);
