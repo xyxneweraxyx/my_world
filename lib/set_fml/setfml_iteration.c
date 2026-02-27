@@ -85,6 +85,7 @@ static void setfml_handlecallbacks(setfml_t *setfml)
     }
     if (setfml->state.to_exec.draw) {
         setfml->state.to_exec.draw = false;
+        sfRenderWindow_clear(setfml->window, sfBlack);
         setfml_execcallback(setfml, LOOP_DRAW);
     }
 }
