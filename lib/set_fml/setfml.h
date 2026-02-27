@@ -35,7 +35,7 @@
     #define MILLI_TO_MICRO 1000
     #define MILLI_TO_NANO 1000000
     #define MICRO_TO_NANO 1000
-    
+
     // Hardcoded values
     #define C_ALLOC_BASE 512
 
@@ -127,15 +127,16 @@ setfml_t *setfml_ini(void *userdata);
 size_t setfml_destroy(setfml_t *setfml);
 void setfml_fillparams(setfml_t *setfml);
 
-size_t setfml_windowCreate(setfml_t *setfml);
-size_t setfml_windowStart(setfml_t *setfml);
-size_t setfml_windowClose(setfml_t *setfml);
-size_t setfml_windowDelete(setfml_t *setfml);
+size_t setfml_windowcreate(setfml_t *setfml);
+size_t setfml_windowstart(setfml_t *setfml);
+size_t setfml_windowclose(setfml_t *setfml);
+size_t setfml_windowdelete(setfml_t *setfml);
+void setfml_iteration(setfml_t *setfml);
 
-size_t setfml_spriteAdd(char name[BUFF_SPRITE_NAME], texture_t *texture);
-size_t setfml_spriteDel(char name[BUFF_SPRITE_NAME]);
-size_t setfml_textureAdd(char name[BUFF_TEXT_NAME], char path[BUFF_TEXT_PATH]);
-size_t setfml_textureDel(char name[BUFF_TEXT_NAME]);
+size_t setfml_spriteadd(char name[BUFF_SPRITE_NAME], texture_t *texture);
+size_t setfml_spritedel(char name[BUFF_SPRITE_NAME]);
+size_t setfml_textureadd(char name[BUFF_TEXT_NAME], char path[BUFF_TEXT_PATH]);
+size_t setfml_texturedel(char name[BUFF_TEXT_NAME]);
 
 size_t setfml_add(loop_t event, char name[BUFF_FUNC_NAME],
     size_t (*callback)(setfml_t *setfml));

@@ -24,7 +24,7 @@ int main(void)
     function_t *func = c_alloc(sizeof(function_t), 1, alloc);
     function_t *func2 = c_alloc(sizeof(function_t), 1, alloc);
 
-    setfml_t *setfml = setfml = setfml_ini((void *)myworld);
+    setfml_t *setfml = setfml_ini((void *)myworld);
 
     if (!setfml)
         return 84;
@@ -46,12 +46,12 @@ int main(void)
     node_t *node2 = linkedlist_newnode((void *)func2);
 
     setfml_fillparams(setfml);
-    setfml_windowCreate(setfml);
+    setfml_windowcreate(setfml);
 
-    linkedlist_insertHead(setfml->functions[LOOP_DATA], node);
-    linkedlist_insertHead(setfml->functions[LOOP_EVENT], node2);
+    linkedlist_inserthead(setfml->functions[LOOP_DATA], node);
+    linkedlist_inserthead(setfml->functions[LOOP_EVENT], node2);
 
-    setfml_windowStart(setfml);
+    setfml_windowstart(setfml);
     setfml_destroy(setfml);
     c_delete(alloc, true);
     return 0;

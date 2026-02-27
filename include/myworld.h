@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** my_world
+** File description:
+** Main header file.
+*/
+
 #ifndef MYWORLD
     #define MYWORLD
 
@@ -18,6 +25,7 @@
 
     // Includes (Libs)
     #include "./../lib/c_alloc/c_alloc.h"
+    #include "./../lib/linkedlist/linkedlist.h"
     #include "./../lib/set_fml/setfml.h"
 
     // Return codes
@@ -40,6 +48,5 @@ typedef struct main {
 } main_t;
 
 // Functions
-
 
 #endif

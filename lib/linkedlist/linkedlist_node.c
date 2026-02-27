@@ -7,7 +7,7 @@
 
 #include "./linkedlist.h"
 
-size_t linkedlist_insertHead(linkedlist_t *linkedlist, node_t *node)
+size_t linkedlist_inserthead(linkedlist_t *linkedlist, node_t *node)
 {
     if (!linkedlist || !node)
         return (size_t)LINKED_FAIL;
@@ -31,7 +31,7 @@ size_t linkedlist_insert(linkedlist_t *linkedlist, node_t *node,
     node->next = NULL;
     node->prev = NULL;
     if (!node_comp)
-        return linkedlist_insertHead(linkedlist, node);
+        return linkedlist_inserthead(linkedlist, node);
     while (node_comp && !comp(node, node_comp))
         node_comp = node_comp->next;
     if (!node_comp)
@@ -75,7 +75,7 @@ size_t linkedlist_remove(linkedlist_t *linkedlist,
     return (size_t)LINKED_SUCC;
 }
 
-size_t linkedlist_massRemove(linkedlist_t *linkedlist,
+size_t linkedlist_massremove(linkedlist_t *linkedlist,
     bool (*comp)(node_t *node), bool delete_data)
 {
     node_t *node = NULL;
