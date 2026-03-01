@@ -32,6 +32,8 @@ size_t setfml_windowstart(setfml_t *setfml)
     if (!setfml | !setfml->window)
         return (size_t)SETFML_FAIL;
     sfRenderWindow_display(setfml->window);
+    function_t *function = (function_t *)setfml->functions[LOOP_EVENT]->head->data;
+    printf("yes %d\n", (int)function->paused);
     while (sfRenderWindow_isOpen(setfml->window))
         setfml_iteration(setfml);
     return (size_t)SETFML_SUCC;
