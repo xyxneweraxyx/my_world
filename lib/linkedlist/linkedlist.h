@@ -23,7 +23,6 @@ typedef struct node {
     struct node *prev;
 } node_t;
 
-
 typedef struct linkedlist {
     node_t *head;
     size_t node_count;

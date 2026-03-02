@@ -29,7 +29,6 @@ size_t setfml_windowcreate(setfml_t *setfml)
 
 size_t setfml_windowstart(setfml_t *setfml)
 {
-    int i = 0;
     if (!setfml | !setfml->window)
         return (size_t)SETFML_FAIL;
     sfRenderWindow_display(setfml->window);
