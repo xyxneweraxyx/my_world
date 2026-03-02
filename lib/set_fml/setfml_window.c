@@ -33,16 +33,8 @@ size_t setfml_windowstart(setfml_t *setfml)
     if (!setfml | !setfml->window)
         return (size_t)SETFML_FAIL;
     sfRenderWindow_display(setfml->window);
-    while (sfRenderWindow_isOpen(setfml->window)) {
-        i++;
-        if (i == 3)
-            setfml_pause(setfml, "event_callback");
-        if (i == 8)
-            setfml_resume(setfml, "event_callback");
-        if (i == 10)
-            setfml_del(setfml, "event_callback");
+    while (sfRenderWindow_isOpen(setfml->window))
         setfml_iteration(setfml);
-    }
     return (size_t)SETFML_SUCC;
 }
 

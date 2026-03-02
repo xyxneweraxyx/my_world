@@ -124,35 +124,145 @@ typedef struct function {
 } function_t;
 
 // Functions
+
+/// Initialization functions
+
+/*
+Initialize a setfml environment with given userdata.
+Returns the new setfml environment, or NULL.
+*/
 setfml_t *setfml_ini(void *userdata);
+
+/*
+Destroys a setfml environment.
+This will destroy the textures, sprites, linked lists, and allocations.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_destroy(setfml_t *setfml);
+
+/*
+Fills the parameters of a setfml environment with default parameters.
+*/
 void setfml_fillparams(setfml_t *setfml);
 
+/// Window functions
+
+/*
+Creates a csfml window and stores it in the setfml environment.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_windowcreate(setfml_t *setfml);
+
+/*
+Starts a setfml window by activating the loop of callback functions.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_windowstart(setfml_t *setfml);
+
+/*
+Closes a setfml window.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_windowclose(setfml_t *setfml);
+
+/*
+Deletes a setfml window.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_windowdelete(setfml_t *setfml);
+
+/*
+Performs a single loop iteration over an open setfml window.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 void setfml_iteration(setfml_t *setfml);
 
-size_t setfml_spriteadd(char name[BUFF_SPRITE_NAME], texture_t *texture);
-size_t setfml_spritedel(char name[BUFF_SPRITE_NAME]);
-size_t setfml_textureadd(char name[BUFF_TEXT_NAME], char path[BUFF_TEXT_PATH]);
-size_t setfml_texturedel(char name[BUFF_TEXT_NAME]);
+/// Texture functions
 
+/*
+Creates and stores a csfml texture.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
+size_t setfml_textureadd(setfml_t *setfml, char name[BUFF_TEXT_NAME],
+    char path[BUFF_TEXT_PATH]);
+
+/*
+Deletes a csfml texture.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
+size_t setfml_texturedel(setfml_t *setfml, char name[BUFF_TEXT_NAME]);
+
+/// Sprite functions
+
+/*
+Creates and stores a csfml sprite with it's corresponding texture.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
+size_t setfml_spriteadd(setfml_t *setfml, char name[BUFF_SPRITE_NAME],
+    texture_t *texture);
+
+/*
+Deletes a csfml sprite.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
+size_t setfml_spritedel(setfml_t *setfml, char name[BUFF_SPRITE_NAME]);
+
+/// Callback add functions
+
+/*
+Adds a callback function to the events (First part of the callbacks)
+If f_before is NULL, the function will be inserted as the new head.
+Those functions typically handle csfml events (Example : Mouse clicked)
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_add_event(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
     char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+
+/*
+Adds a callback function to the data (Second part of the callbacks)
+If f_before is NULL, the function will be inserted as the new head.
+Those functions typically modify the data at run-time (Example : Add currency)
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_add_data(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
     char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+
+/*
+Adds a callback function to the rendering (Third part of the callbacks)
+If f_before is NULL, the function will be inserted as the new head.
+Those functions typically modify the rendering (Example : Occuling)
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_add_render(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
     char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+
+/*
+Adds a callback function to the drawing (Fourth part of the callbacks)
+If f_before is NULL, the function will be inserted as the new head.
+Those functions typically draw parts of the final render.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
 size_t setfml_add_draw(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
     char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
 
-size_t setfml_del(setfml_t *sketfml, char name[BUFF_FUNC_NAME]);
-size_t setfml_pause(setfml_t *setfml, char name[BUFF_FUNC_NAME]);
-size_t setfml_resume(setfml_t *setfml, char name[BUFF_FUNC_NAME]);
+// Callback modify functions
 
-function_t *setfml_getFunctionByName(setfml_t *setfml,
-    char name[BUFF_FUNC_NAME]);
+/*
+Deletes a callback function based on its name.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
+size_t setfml_del(setfml_t *sketfml, char name[BUFF_FUNC_NAME]);
+
+/*
+Pauses a callback function based on its name.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
+size_t setfml_pause(setfml_t *setfml, char name[BUFF_FUNC_NAME]);
+
+/*
+Resumes a callback function based on its name.
+Returns SETFML_SUCC or SETFML_FAIL.
+*/
+size_t setfml_resume(setfml_t *setfml, char name[BUFF_FUNC_NAME]);
 
 #endif

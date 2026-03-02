@@ -7,12 +7,50 @@
 
 #include "./setfml.h"
 
-size_t setfml_textureadd(char name[BUFF_TEXT_NAME], char path[BUFF_TEXT_PATH])
+static node_t *find_texture(setfml_t *setfml, char name[BUFF_TEXT_NAME])
 {
+    texture_t *texture = NULL;
 
+    for (node_t *node = setfml->textures->head; node; node = node->next) {
+        texture = (texture_t *)node->data;
+        if (!str_cmp(texture->name, name))
+            return node;
+    }
+    return NULL;
 }
 
-size_t setfml_texturedel(char name[BUFF_TEXT_NAME])
+size_t setfml_textureadd(setfml_t *setfml, char name[BUFF_TEXT_NAME],
+    char path[BUFF_TEXT_PATH])
 {
-    
+    texture_t *texture = c_alloc(sizeof(texture_t), 1, setfml->alloc);
+    node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
+
+    if (!texture || !node)
+        return (size_t)SETFML_FAIL;
+    str_cpy(name, texture->name);
+    str_cpy(path, texture->path);
+    texture->texture = sfTexture_createFromFile(path, NULL);
+    if (!texture->texture)
+        return (size_t)SETFML_FAIL;
+    node->data = (void *)texture;
+    if (linkedlist_inserthead(setfml->textures, node) == (size_t)SETFML_FAIL)
+        return (size_t)SETFML_FAIL;
+    return (size_t)SETFML_SUCC;
+}
+
+size_t setfml_texturedel(setfml_t *setfml, char name[BUFF_TEXT_NAME])
+{
+    node_t *node = NULL;
+    texture_t *texture = NULL;
+
+    if (!setfml || !setfml->textures)
+        return (size_t)SETFML_FAIL;
+    node = find_texture(setfml, name);
+    if (!node)
+        return (size_t)SETFML_FAIL;
+    texture = (texture_t *)node->data;
+    if (texture->texture)
+        sfTexture_destroy(texture->texture);
+    linkedlist_remove(setfml->textures, node, false);
+    return (size_t)SETFML_SUCC;
 }

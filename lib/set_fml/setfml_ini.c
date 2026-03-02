@@ -44,15 +44,36 @@ setfml_t *setfml_ini(void *userdata)
     return setfml;
 }
 
-// On choisit de ne supprimer que les nodes et pas la data
-// En supposant que l'utilisateur gère et free sa data
-// (Notamment en utilisant c_alloc)
+static void destroy_textures(setfml_t *setfml)
+{
+    texture_t *texture = NULL;
+
+    for (node_t *node = setfml->textures->head; node; node = node->next) {
+        texture = (texture_t *)node->data;
+        if (texture->texture)
+            sfTexture_destroy(texture->texture);
+    }
+}
+
+static void destroy_sprites(setfml_t *setfml)
+{
+    sprite_t *sprite = NULL;
+
+    for (node_t *node = setfml->sprites->head; node; node = node->next) {
+        sprite = (sprite_t *)node->data;
+        if (sprite->sprite)
+            sfSprite_destroy(sprite->sprite);
+    }
+}
+
 size_t setfml_destroy(setfml_t *setfml)
 {
-    linkedlist_destroy(setfml->sprites, false);
-    linkedlist_destroy(setfml->textures, false);
+    destroy_textures(setfml);
+    destroy_sprites(setfml);
+    linkedlist_destroy(setfml->sprites, true);
+    linkedlist_destroy(setfml->textures, true);
     for (size_t i = 0; i < 4; i++)
-        linkedlist_destroy(setfml->functions[i], false);
+        linkedlist_destroy(setfml->functions[i], true);
     sfRenderWindow_destroy(setfml->window);
     c_delete(setfml->alloc, true);
     return (size_t)SETFML_SUCC;
