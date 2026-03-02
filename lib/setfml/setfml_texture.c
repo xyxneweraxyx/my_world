@@ -7,7 +7,7 @@
 
 #include "./setfml.h"
 
-static node_t *find_texture(setfml_t *setfml, char name[BUFF_TEXT_NAME])
+node_t *setfml_texturefromname(setfml_t *setfml, char name[BUFF_TEXT_NAME])
 {
     texture_t *texture = NULL;
 
@@ -45,7 +45,7 @@ size_t setfml_texturedel(setfml_t *setfml, char name[BUFF_TEXT_NAME])
 
     if (!setfml || !setfml->textures)
         return (size_t)SETFML_FAIL;
-    node = find_texture(setfml, name);
+    node = setfml_texturefromname(setfml, name);
     if (!node)
         return (size_t)SETFML_FAIL;
     texture = (texture_t *)node->data;

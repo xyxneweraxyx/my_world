@@ -192,6 +192,12 @@ Returns SETFML_SUCC or SETFML_FAIL.
 */
 size_t setfml_texturedel(setfml_t *setfml, char name[BUFF_TEXT_NAME]);
 
+/*
+Finds a texture based on its name.
+Returns the texture's node, or NULL.
+*/
+node_t *setfml_texturefromname(setfml_t *setfml, char name[BUFF_TEXT_NAME]);
+
 /// Sprite functions
 
 /*
@@ -206,6 +212,12 @@ Deletes a csfml sprite.
 Returns SETFML_SUCC or SETFML_FAIL.
 */
 size_t setfml_spritedel(setfml_t *setfml, char name[BUFF_SPRITE_NAME]);
+
+/*
+Finds a texture based on its name.
+Returns the sprite's node, or NULL.
+*/
+node_t *setfml_spritefromname(setfml_t *setfml, char name[BUFF_SPRITE_NAME]);
 
 /// Callback add functions
 

@@ -7,7 +7,7 @@
 
 #include "./setfml.h"
 
-static node_t *find_sprite(setfml_t *setfml, char name[BUFF_SPRITE_NAME])
+node_t *setfml_spritefromname(setfml_t *setfml, char name[BUFF_SPRITE_NAME])
 {
     sprite_t *sprite = NULL;
 
@@ -46,7 +46,7 @@ size_t setfml_spritedel(setfml_t *setfml, char name[BUFF_SPRITE_NAME])
 
     if (!setfml || !setfml->sprites)
         return (size_t)SETFML_FAIL;
-    node = find_sprite(setfml, name);
+    node = setfml_spritefromname(setfml, name);
     if (!node)
         return (size_t)SETFML_FAIL;
     sprite = (sprite_t *)node->data;
