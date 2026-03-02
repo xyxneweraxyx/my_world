@@ -29,13 +29,20 @@ size_t setfml_windowcreate(setfml_t *setfml)
 
 size_t setfml_windowstart(setfml_t *setfml)
 {
+    int i = 0;
     if (!setfml | !setfml->window)
         return (size_t)SETFML_FAIL;
     sfRenderWindow_display(setfml->window);
-    function_t *function = (function_t *)setfml->functions[LOOP_EVENT]->head->data;
-    printf("yes %d\n", (int)function->paused);
-    while (sfRenderWindow_isOpen(setfml->window))
+    while (sfRenderWindow_isOpen(setfml->window)) {
+        i++;
+        if (i == 3)
+            setfml_pause(setfml, "event_callback");
+        if (i == 8)
+            setfml_resume(setfml, "event_callback");
+        if (i == 10)
+            setfml_del(setfml, "event_callback");
         setfml_iteration(setfml);
+    }
     return (size_t)SETFML_SUCC;
 }
 

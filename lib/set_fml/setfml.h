@@ -141,6 +141,13 @@ size_t setfml_texturedel(char name[BUFF_TEXT_NAME]);
 
 size_t setfml_add_event(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
     char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+size_t setfml_add_data(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
+    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+size_t setfml_add_render(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
+    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+size_t setfml_add_draw(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
+    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+
 size_t setfml_del(setfml_t *sketfml, char name[BUFF_FUNC_NAME]);
 size_t setfml_pause(setfml_t *setfml, char name[BUFF_FUNC_NAME]);
 size_t setfml_resume(setfml_t *setfml, char name[BUFF_FUNC_NAME]);

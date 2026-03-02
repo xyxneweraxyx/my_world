@@ -60,38 +60,45 @@ static void rm_node(linkedlist_t *linkedlist, node_t *node, bool delete_data)
 }
 
 size_t linkedlist_remove(linkedlist_t *linkedlist,
-    bool (*comp)(node_t *node), bool delete_data)
+    node_t *node, bool delete_data)
 {
-    node_t *node = NULL;
-
-    if (!linkedlist || !comp)
+    if (!linkedlist || !linkedlist->head)
         return (size_t)LINKED_FAIL;
-    node = linkedlist->head;
-    while (node && !comp(node))
-        node = node->next;
-    if (!node)
-        return (size_t)LINKED_FAIL;
-    rm_node(linkedlist, node, delete_data);
-    return (size_t)LINKED_SUCC;
+    for (node_t *curr = linkedlist->head; curr; curr = curr->next) {
+        if (curr == node) {
+            rm_node(linkedlist, node, delete_data);
+            return (size_t)LINKED_SUCC;
+        }
+    }
+    return (size_t)LINKED_FAIL;
 }
 
-size_t linkedlist_massremove(linkedlist_t *linkedlist,
-    bool (*comp)(node_t *node), bool delete_data)
+size_t linkedlist_removecomp(linkedlist_t *linkedlist,
+    bool (*comp)(node_t *node), bool delete_data, bool mass_delete)
 {
     node_t *node = NULL;
-    node_t *temp = NULL;
     size_t total = 0;
 
     if (!linkedlist || !comp)
         return (size_t)LINKED_FAIL;
-    node = linkedlist->head;
-    while (node) {
-        temp = node;
-        node = node->next;
-        if (comp(temp)) {
-            rm_node(linkedlist, temp, delete_data);
+    for (node = linkedlist->head; node; node = node->next) {
+        if (comp(node)) {
+            rm_node(linkedlist, node, delete_data);
             total += 1;
         }
+        if (total > 0 && !mass_delete)
+            break;
     }
-    return total;
+    return (size_t)total;
+}
+
+node_t *linkedlist_find(linkedlist_t *linkedlist, bool (*comp)(node_t *node))
+{
+    if (!linkedlist || linkedlist->head || !comp)
+        return NULL;
+    for (node_t *node = linkedlist->head; node; node = node->next) {
+        if (comp(node))
+            return node;
+    }
+    return NULL;
 }

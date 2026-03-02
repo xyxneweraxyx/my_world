@@ -17,6 +17,19 @@ size_t event_callback(setfml_t *setfml)
     return (size_t)SETFML_SUCC;
 }
 
+size_t event_callback2(setfml_t *setfml)
+{
+    printf("data callback 2!\n");
+    return (size_t)SETFML_SUCC;
+}
+
+size_t event_callback3(setfml_t *setfml)
+{
+    printf("draw callback 3!\n");
+    return (size_t)SETFML_SUCC;
+}
+
+
 int main(void)
 {
     c_alloc_t *alloc = c_ini((uint16_t)5);
@@ -27,8 +40,8 @@ int main(void)
         return 84;
     
     setfml_add_event(setfml, NULL, "event_callback", &event_callback);
-    function_t *function = (function_t *)setfml->functions[LOOP_EVENT]->head->data;
-    printf("rn %d\n", (int)function->paused);
+    //setfml_add_data(setfml, &event_callback, "event_callback2", &event_callback2);
+    //setfml_add_draw(setfml, NULL, "event_callback3", &event_callback3);
     setfml_fillparams(setfml);
 
     setfml_windowcreate(setfml);

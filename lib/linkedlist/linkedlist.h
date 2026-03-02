@@ -62,16 +62,25 @@ size_t linkedlist_insert(linkedlist_t *linkedlist, node_t *node,
     bool (*comp)(node_t *toinsert, node_t *comp));
 
 /*
-Removes the first node object in the list that matches the comparison function.
+Attempts to remove a node from a linked list.
+Will attempt to free the node's data with delete_data.
+Returns LINKED_FAIL on error.
 */
 size_t linkedlist_remove(linkedlist_t *linkedlist,
-    bool (*comp)(node_t *node), bool delete_data);
+    node_t *node, bool delete_data);
 
 /*
-Removes all node objects in the list that match the comparison function.
-Returns the total amount of removed objects, or LINKED_FAIL on error.
+Removes node objects in a linked list that match the comparison function.
+Can delete the data or mass delete all matches based on the given booleans.
+Will return LINKED_FAIL on error, or the amount of deletions on success.
 */
-size_t linkedlist_massremove(linkedlist_t *linkedlist,
-    bool (*comp)(node_t *node), bool delete_data);
+size_t linkedlist_removecomp(linkedlist_t *linkedlist,
+    bool (*comp)(node_t *node), bool delete_data, bool mass_delete);
+
+/*
+Attempts to find a node in a given linked list, given a comparison function.
+Will return NULL if no node was found.
+*/
+node_t *linkedlist_find(linkedlist_t *linkedlist, bool (*comp)(node_t *node));
 
 #endif
