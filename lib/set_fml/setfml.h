@@ -21,7 +21,7 @@
 
     // Return codes
     #define SETFML_SUCC 0
-    #define SETFML_FAIL 84
+    #define SETFML_FAIL -1
 
     // Buffer lengths
     #define BUFF_FUNC_NAME 32
