@@ -7,6 +7,14 @@
 
 #include "./setfml.h"
 
+static size_t setfml_closewindow(setfml_t *setfml, void *userdata)
+{
+    setfml_t *setfml2 = (setfml_t *)userdata;
+
+    setfml_windowclose(setfml);
+    return (size_t)SETFML_SUCC;
+}
+
 void setfml_fillparams(setfml_t *setfml)
 {
     if (!setfml)
@@ -41,6 +49,7 @@ setfml_t *setfml_ini(void *userdata)
     setfml->textures = linkedlist_ini();
     for (size_t i = 0; i < (size_t)SETFML_LINKEDLIST_AMT; i++)
         setfml->functions[i] = linkedlist_ini();
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &setfml_closewindow}, "closewindow", sfEvtClosed);
     return setfml;
 }
 
@@ -70,10 +79,10 @@ size_t setfml_destroy(setfml_t *setfml)
 {
     destroy_textures(setfml);
     destroy_sprites(setfml);
-    linkedlist_destroy(setfml->sprites, true);
-    linkedlist_destroy(setfml->textures, true);
+    linkedlist_destroy(setfml->sprites, false);
+    linkedlist_destroy(setfml->textures, false);
     for (size_t i = 0; i < (size_t)SETFML_LINKEDLIST_AMT; i++)
-        linkedlist_destroy(setfml->functions[i], true);
+        linkedlist_destroy(setfml->functions[i], false);
     if (setfml->window)
         setfml_windowdestroy(setfml);
     c_delete(setfml->alloc, true);

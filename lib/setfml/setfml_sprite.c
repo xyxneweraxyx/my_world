@@ -26,7 +26,7 @@ size_t setfml_spriteadd(setfml_t *setfml, char name[BUFF_SPRITE_NAME],
     texture_t *texture)
 {
     sprite_t *sprite = c_alloc(sizeof(sprite_t), 1, setfml->alloc);
-    node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
+    node_t *node = linkedlist_newnode(sprite);
 
     if (!sprite || !node)
         return (size_t)SETFML_FAIL;

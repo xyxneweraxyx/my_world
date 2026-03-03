@@ -21,11 +21,10 @@ static size_t is_mouse_on_button(button_t *button, size_t x, size_t y)
 static size_t buttonfml_reset(setfml_t *setfml, void *userdata)
 {
     buttonfml_t *buttonfml = (buttonfml_t *)userdata;
-    button_t *button = (button_t *)buttonfml->buttons->head->data;
+    button_t *button = NULL;
     char text_name[BUFF_TEXT_NAME] = {0};
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
-        printf("yes\n");
         if (!button->is_visible || button->state == BUTTON_IDLE)
             continue;
         button = (button_t *)node->data;
@@ -40,7 +39,7 @@ static size_t buttonfml_reset(setfml_t *setfml, void *userdata)
 static size_t buttonfml_mousemove(setfml_t *setfml, void *userdata)
 {
     buttonfml_t *buttonfml = (buttonfml_t *)userdata;
-    button_t *button = (button_t *)buttonfml->buttons->head->data;
+    button_t *button = NULL;
     char text_name[BUFF_TEXT_NAME] = {0};
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
@@ -67,7 +66,7 @@ static size_t buttonfml_mousemove(setfml_t *setfml, void *userdata)
 static size_t buttonfml_mouseclick(setfml_t *setfml, void *userdata)
 {
     buttonfml_t *buttonfml = (buttonfml_t *)userdata;
-    button_t *button = (button_t *)buttonfml->buttons->head->data;
+    button_t *button = NULL;
     char text_name[BUFF_TEXT_NAME] = {0};
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
@@ -93,7 +92,7 @@ static size_t buttonfml_mouseclick(setfml_t *setfml, void *userdata)
 static size_t buttonfml_frame(setfml_t *setfml, void *userdata)
 {
     buttonfml_t *buttonfml = (buttonfml_t *)userdata;
-    button_t *button = (button_t *)buttonfml->buttons->head->data;
+    button_t *button = NULL;
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
         if (!button->is_visible)
@@ -112,7 +111,7 @@ static size_t buttonfml_frame(setfml_t *setfml, void *userdata)
 static size_t buttonfml_draw(setfml_t *setfml, void *userdata)
 {
     buttonfml_t *buttonfml = (buttonfml_t *)userdata;
-    button_t *button = (button_t *)buttonfml->buttons->head->data;
+    button_t *button = NULL;
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
         if (!button->is_visible)
@@ -128,15 +127,6 @@ size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
 {
     node_t *node = NULL;
     function_t *function = NULL;
-
-    setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
-        &buttonfml_reset}, "buttonfml_reset", 0);
-    node = setfml_nodefromfunc(buttonfml->setfml, "buttonfml_reset",
-        0);
-    if (!node)
-        return (size_t)BUTTONFML_FAIL;
-    function = (function_t *)node->data;
-    function->userdata = (void *)buttonfml;
 
     setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
         &buttonfml_draw}, "buttonfml_draw", LOOP_DRAW);
@@ -173,5 +163,15 @@ size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
         return (size_t)BUTTONFML_FAIL;
     function = (function_t *)node->data;
     function->userdata = (void *)buttonfml;
+
+    setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
+        &buttonfml_reset}, "buttonfml_reset", sfEvtMouseMoved);
+    node = setfml_nodefromfunc(buttonfml->setfml, "buttonfml_reset",
+        sfEvtMouseMoved);
+    if (!node)
+        return (size_t)BUTTONFML_FAIL;
+    function = (function_t *)node->data;
+    function->userdata = (void *)buttonfml;
+
     return (size_t)BUTTONFML_SUCC;
 }

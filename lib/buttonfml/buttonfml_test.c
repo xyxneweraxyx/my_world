@@ -33,7 +33,10 @@ int main(void)
 
     setfml_fillparams(setfml);
 
-    button_t *button = buttonfml_buttoncreate(buttonfml, &(btn_text_t){"./assets/images/thug.png", "", ""}, &(btn_clbck_t){NULL, NULL, NULL}, "my_button");
+    button_t *button = buttonfml_buttoncreate(buttonfml,
+        &(btn_text_t){"./assets/images/thug.png", "./assets/images/thug2.png", ""},
+        &(btn_clbck_t){NULL, NULL, NULL},
+        "my_button");
 
     setfml_windowcreate(setfml);
     setfml_windowstart(setfml);

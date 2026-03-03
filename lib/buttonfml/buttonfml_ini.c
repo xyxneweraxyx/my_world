@@ -46,6 +46,6 @@ void buttonfml_destroy(buttonfml_t *buttonfml)
         if (data->button)
             setfml_spritedel(buttonfml->setfml, data->button->name);
     }
-    linkedlist_destroy(buttonfml->buttons, true);
+    linkedlist_destroy(buttonfml->buttons, false);
     c_delete(buttonfml->alloc, true);
 }

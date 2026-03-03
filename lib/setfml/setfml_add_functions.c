@@ -49,8 +49,8 @@ static loop_t func_from_name(setfml_t *setfml, char name[BUFF_FUNC_NAME])
 size_t setfml_add(setfml_t *setfml, setfml_func_comp_t *functions,
     char name[BUFF_FUNC_NAME], size_t event)
 {
-    node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
     function_t *function = c_alloc(sizeof(function_t), 1, setfml->alloc);
+    node_t *node = linkedlist_newnode(function);
 
     if (!node || !function || event < 0 || event > SETFML_LINKEDLIST_AMT ||
         !functions || event >= SETFML_LINKEDLIST_AMT)

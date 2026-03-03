@@ -26,7 +26,7 @@ size_t setfml_textureadd(setfml_t *setfml, char name[BUFF_TEXT_NAME],
     char path[BUFF_TEXT_PATH])
 {
     texture_t *texture = c_alloc(sizeof(texture_t), 1, setfml->alloc);
-    node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
+    node_t *node = linkedlist_newnode(texture);
 
     if (!texture || !node)
         return (size_t)SETFML_FAIL;

@@ -102,7 +102,6 @@ button_t *buttonfml_buttoncreate(buttonfml_t *buttonfml, btn_text_t *textures,
     button->is_clickable = true;
     if (ini_textures_and_sprites(button) == (size_t)BUTTONFML_FAIL)
         return NULL;
-    printf("reached down\n");
     return button;
 }
 
