@@ -7,10 +7,29 @@
 
 #include "./buttonfml.h"
 
-static size_t ini_textures_and_sprites(button_t *button)
+static size_t final_set(button_t *button)
 {
     char t_name[BUFF_TEXT_NAME] = {0};
     texture_t *texture = NULL;
+    sprite_t *sprite = NULL;
+
+    str_cat(t_name, 2, button->name, "_idle");
+    texture = setfml_texturefromname(button->setfml, t_name, false);
+    if (!texture)
+        return (size_t)BUTTONFML_FAIL;
+    if (setfml_spriteadd(button->setfml, button->name, texture)
+        == (size_t)BUTTONFML_FAIL)
+        return (size_t)BUTTONFML_FAIL;
+    sprite = setfml_spritefromname(button->setfml, button->name, false);
+    if (!sprite)
+        return (size_t)BUTTONFML_FAIL;
+    button->button = sprite;
+    return (size_t)BUTTONFML_SUCC;
+}
+
+static size_t ini_textures_and_sprites(button_t *button)
+{
+    char t_name[BUFF_TEXT_NAME] = {0};
 
     if (button->textures->idle[0]) {
         str_cat(t_name, 2, button->name, "_idle");
@@ -24,11 +43,8 @@ static size_t ini_textures_and_sprites(button_t *button)
         str_cat(t_name, 2, button->name, "_click");
         setfml_textureadd(button->setfml, t_name, button->textures->click);
     }
-    str_cat(t_name, 2, button->name, "_idle");
-    texture = (texture_t *)setfml_texturefromname(button->setfml, t_name, true);
-    if (!texture)
-        return (size_t)BUTTONFML_FAIL;
-    setfml_spriteadd(button->setfml, button->name, texture);
+    final_set(button);
+    return (size_t)BUTTONFML_SUCC;
 }
 
 static node_t *node_from_name(buttonfml_t *buttonfml,
@@ -82,7 +98,8 @@ button_t *buttonfml_buttoncreate(buttonfml_t *buttonfml, btn_text_t *textures,
     button->callbacks = callbacks;
     button->buttonfml = buttonfml;
     button->state = BUTTON_IDLE;
-    // ON sait qu'il y a un probleme par la avec l'ini de textures
+    button->is_visible = true;
+    button->is_clickable = true;
     if (ini_textures_and_sprites(button) == (size_t)BUTTONFML_FAIL)
         return NULL;
     printf("reached down\n");

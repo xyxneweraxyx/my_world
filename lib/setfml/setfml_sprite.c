@@ -65,7 +65,7 @@ size_t setfml_spritechangetexture(setfml_t *setfml, sprite_t *sprite,
     node_t *node = setfml_texturefromname(setfml, texture_name, true);
     texture_t *texture = NULL;
 
-    if (!texture)
+    if (!node)
         return (size_t)SETFML_FAIL;
     texture = (texture_t *)node->data;
     sprite->texture = texture;

@@ -34,11 +34,8 @@ int main(void)
     setfml_fillparams(setfml);
 
     setfml_textureadd(setfml, "thug", "./assets/images/thug.png");
-    setfml_spriteadd(setfml, "test", setfml_texturefromname(setfml, "thug", false));
 
     setfml_add(setfml, &(setfml_func_comp_t){NULL, &mouse_moved}, "mouse_moved", sfEvtMouseMoved);
-    setfml_add(setfml, &(setfml_func_comp_t){&mouse_moved, &mouse_moved_2}, "mouse_moved_2", sfEvtMouseMoved);
-    setfml_add(setfml, &(setfml_func_comp_t){NULL, &mouse_click}, "mouse_click", sfEvtMouseButtonPressed);
 
     button_t *button = buttonfml_buttoncreate(buttonfml, &(btn_text_t){"./assets/images/thug.png", "", ""}, &(btn_clbck_t){NULL, NULL, NULL}, "my_button");
 
