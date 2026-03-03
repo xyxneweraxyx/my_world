@@ -7,14 +7,17 @@
 
 #include "./setfml.h"
 
-node_t *setfml_spritefromname(setfml_t *setfml, char name[BUFF_SPRITE_NAME])
+void *setfml_spritefromname(setfml_t *setfml,
+    char name[BUFF_SPRITE_NAME], bool return_node)
 {
     sprite_t *sprite = NULL;
 
     for (node_t *node = setfml->sprites->head; node; node = node->next) {
         sprite = (sprite_t *)node->data;
-        if (!str_cmp(sprite->name, name))
-            return node;
+        if (!str_cmp(sprite->name, name) && return_node)
+            return (void *)node;
+        if (!str_cmp(sprite->name, name) && !return_node)
+            return (void *)node->data;
     }
     return NULL;
 }
@@ -32,7 +35,7 @@ size_t setfml_spriteadd(setfml_t *setfml, char name[BUFF_SPRITE_NAME],
     sprite->sprite = sfSprite_create();
     if (!sprite->sprite)
         return (size_t)SETFML_FAIL;
-    sfSprite_setTexture(sprite->sprite, texture->texture, sfTrue);
+    setfml_spritechangetexture(setfml, sprite, texture->name);
     node->data = (void *)sprite;
     if (linkedlist_inserthead(setfml->sprites, node) == (size_t)SETFML_FAIL)
         return (size_t)SETFML_FAIL;
@@ -46,12 +49,26 @@ size_t setfml_spritedel(setfml_t *setfml, char name[BUFF_SPRITE_NAME])
 
     if (!setfml || !setfml->sprites)
         return (size_t)SETFML_FAIL;
-    node = setfml_spritefromname(setfml, name);
+    node = setfml_spritefromname(setfml, name, true);
     if (!node)
         return (size_t)SETFML_FAIL;
     sprite = (sprite_t *)node->data;
     if (sprite->sprite)
         sfSprite_destroy(sprite->sprite);
     linkedlist_remove(setfml->sprites, node, true);
+    return (size_t)SETFML_SUCC;
+}
+
+size_t setfml_spritechangetexture(setfml_t *setfml, sprite_t *sprite,
+    char texture_name[BUFF_TEXT_NAME])
+{
+    node_t *node = setfml_texturefromname(setfml, texture_name, true);
+    texture_t *texture = NULL;
+
+    if (!texture)
+        return (size_t)SETFML_FAIL;
+    texture = (texture_t *)node->data;
+    sprite->texture = texture;
+    sfSprite_setTexture(sprite->sprite, texture->texture, sfTrue);
     return (size_t)SETFML_SUCC;
 }

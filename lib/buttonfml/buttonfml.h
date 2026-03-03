@@ -29,9 +29,9 @@ typedef enum btn_state_t {
 // Structures
 
 typedef struct btn_text {
-    char idle[BUFF_TEXT_PATH]; // The texture used when no interactions are performed.
-    char hover[BUFF_TEXT_PATH]; // The texture used when the button is hovered over.
-    char click[BUFF_TEXT_PATH]; // The texture used on click.
+    char idle[BUFF_TEXT_PATH]; // The texture used without interactions.
+    char hover[BUFF_TEXT_PATH]; // The texture used when button is hovered over.
+    char click[BUFF_TEXT_PATH]; // The texture used when button is clicked.
 } btn_text_t;
 
 typedef struct btn_clbck {
@@ -44,6 +44,12 @@ typedef struct btn_stats {
     size_t clicked; // Amount of times the button was clicked.
 } btn_stats_t;
 
+typedef struct buttonfml {
+    c_alloc_t *alloc; // Allocations.
+    setfml_t *setfml; // Setfml environment the buttonfml is created in.
+    linkedlist_t *buttons; // Linked list of buttons.
+} buttonfml_t;
+
 typedef struct button {
     setfml_t *setfml; // The setfml environment the button is linked to.
     sprite_t *button; // The sprite of the button.
@@ -53,15 +59,9 @@ typedef struct button {
     char name[BUTTON_NAME]; // The name of the button.
     btn_stats_t stats; // Stats of the button at runtime.
     btn_state_t state; // The current state of the button.
-    bool is_visible; // Is this button drawn?
-    bool is_clickable; // Can this button be clicked?
+    bool is_visible; // Is this button drawn? (Changes hover + click)
+    bool is_clickable; // Can this button be clicked? (Changes hover)
 } button_t;
-
-typedef struct buttonfml {
-    c_alloc_t *alloc; // Allocations.
-    setfml_t *setfml; // Setfml environment the buttonfml is created in.
-    linkedlist_t *buttons; // Linked list of buttons.
-} buttonfml_t;
 
 // Functions
 
@@ -82,7 +82,7 @@ void buttonfml_destroy(buttonfml_t *buttonfml);
 // Button functions
 
 /*
-Creates a new button given a buttonfml environment, textures, callbacks, and a pos
+Creates a new button given a buttonfml environment, textures, callbacks, name.
 Returns the button on success, or NULL on fail.
 */
 button_t *buttonfml_buttoncreate(buttonfml_t *buttonfml, btn_text_t *textures,
@@ -99,6 +99,6 @@ size_t buttonfml_buttonshow(buttonfml_t *buttonfml, char name[BUTTON_NAME]);
 size_t buttonfml_buttonhide(buttonfml_t *buttonfml, char name[BUTTON_NAME]);
 button_t *buttonfml_buttonfromname(buttonfml_t *buttonfml,
     char name[BUTTON_NAME]);
-size_t buttonfml_connectcallbacks(button_t *button, btn_clbck_t *callbacks);
+size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml);
 
 #endif

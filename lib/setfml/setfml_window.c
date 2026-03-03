@@ -32,8 +32,10 @@ size_t setfml_windowstart(setfml_t *setfml)
     if (!setfml | !setfml->window)
         return (size_t)SETFML_FAIL;
     sfRenderWindow_display(setfml->window);
-    while (sfRenderWindow_isOpen(setfml->window))
+    while (sfRenderWindow_isOpen(setfml->window)) {
         setfml_iteration(setfml);
+        //setfml_windowclose(setfml);
+    }
     return (size_t)SETFML_SUCC;
 }
 
@@ -45,7 +47,7 @@ size_t setfml_windowclose(setfml_t *setfml)
     return (size_t)SETFML_SUCC;
 }
 
-size_t setfml_windowdelete(setfml_t *setfml)
+size_t setfml_windowdestroy(setfml_t *setfml)
 {
     if (!setfml | !setfml->window)
         return (size_t)SETFML_FAIL;

@@ -21,102 +21,103 @@ static bool insert_func(node_t *toinsert, node_t *comp)
     return false;
 }
 
-size_t setfml_add_event(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml))
+node_t *setfml_nodefromfunc(setfml_t *setfml,
+    char name[BUFF_FUNC_NAME], size_t event)
+{
+    function_t *func = NULL;
+
+    for (node_t *n = setfml->functions[event]->head; n; n = n->next) {
+        func = (function_t *)n->data;
+        if (!str_cmp(func->name, name))
+            return n;
+    }
+    return NULL;
+}
+
+static loop_t func_from_name(setfml_t *setfml, char name[BUFF_FUNC_NAME])
+{
+    node_t *node = NULL;
+
+    for (loop_t event = 0; event < SETFML_EVT_AMT; event++) {
+        node = setfml_nodefromfunc(setfml, name, event);
+        if (node)
+            return event;
+    }
+    return (loop_t)SETFML_FAIL;
+}
+
+size_t setfml_add(setfml_t *setfml, setfml_func_comp_t *functions,
+    char name[BUFF_FUNC_NAME], size_t event)
 {
     node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
     function_t *function = c_alloc(sizeof(function_t), 1, setfml->alloc);
 
-    if (!node || !function)
+    if (!node || !function || event < 0 || event > SETFML_LINKEDLIST_AMT ||
+        !functions || event >= SETFML_LINKEDLIST_AMT)
         return (size_t)SETFML_FAIL;
     function->paused = false;
-    function->function = f_before;
+    function->function = functions->f_before;
     str_cpy(name, function->name);
     node->data = (void *)function;
-    if (!f_before) {
-        if (linkedlist_inserthead(setfml->functions[LOOP_EVENT], node)
+    if (!functions->f_before) {
+        if (linkedlist_inserthead(setfml->functions[event], node)
             == (size_t)SETFML_FAIL)
             return (size_t)SETFML_FAIL;
     } else {
-        if (linkedlist_insert(setfml->functions[LOOP_EVENT], node, &insert_func)
+        if (linkedlist_insert(setfml->functions[event], node, &insert_func)
             == (size_t)SETFML_FAIL)
-        return (size_t)SETFML_FAIL;
+            return (size_t)SETFML_FAIL;
     }
-    function->function = (void*)callback;
+    function->function = (void *)functions->callback;
     return (size_t)SETFML_SUCC;
 }
 
-size_t setfml_add_data(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml))
+size_t setfml_del(setfml_t *setfml, char name[BUFF_FUNC_NAME])
 {
-    node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
-    function_t *function = c_alloc(sizeof(function_t), 1, setfml->alloc);
+    loop_t event = func_from_name(setfml, name);
+    node_t *node = NULL;
 
-    if (!node || !function)
+    if (event == (loop_t)SETFML_FAIL)
         return (size_t)SETFML_FAIL;
-    function->paused = false;
-    function->function = f_before;
-    str_cpy(name, function->name);
-    node->data = (void *)function;
-    if (!f_before) {
-        if (linkedlist_inserthead(setfml->functions[LOOP_DATA], node)
-            == (size_t)SETFML_FAIL)
-            return (size_t)SETFML_FAIL;
-    } else {
-        if (linkedlist_insert(setfml->functions[LOOP_DATA], node, &insert_func)
-            == (size_t)SETFML_FAIL)
+    node = setfml_nodefromfunc(setfml, name, event);
+    if (!node)
         return (size_t)SETFML_FAIL;
-    }
-    function->function = (void*)callback;
+    linkedlist_remove(setfml->functions[event], node, true);
     return (size_t)SETFML_SUCC;
 }
 
-size_t setfml_add_render(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml))
+size_t setfml_pause(setfml_t *setfml, char name[BUFF_FUNC_NAME])
 {
-    node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
-    function_t *function = c_alloc(sizeof(function_t), 1, setfml->alloc);
+    loop_t event = func_from_name(setfml, name);
+    node_t *node = NULL;
+    function_t *function = NULL;
 
-    if (!node || !function)
+    if (event == (loop_t)SETFML_FAIL)
         return (size_t)SETFML_FAIL;
-    function->paused = false;
-    function->function = f_before;
-    str_cpy(name, function->name);
-    node->data = (void *)function;
-    if (!f_before) {
-        if (linkedlist_inserthead(setfml->functions[LOOP_RENDER], node)
-            == (size_t)SETFML_FAIL)
-            return (size_t)SETFML_FAIL;
-    } else {
-        if (linkedlist_insert(setfml->functions[LOOP_RENDER], node, &insert_func)
-            == (size_t)SETFML_FAIL)
+    node = setfml_nodefromfunc(setfml, name, event);
+    if (!node)
         return (size_t)SETFML_FAIL;
-    }
-    function->function = (void*)callback;
+    function = (function_t *)node->data;
+    if (!function)
+        return (size_t)SETFML_FAIL;
+    function->paused = true;
     return (size_t)SETFML_SUCC;
 }
 
-size_t setfml_add_draw(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml))
+size_t setfml_resume(setfml_t *setfml, char name[BUFF_FUNC_NAME])
 {
-    node_t *node = c_alloc(sizeof(node_t), 1, setfml->alloc);
-    function_t *function = c_alloc(sizeof(function_t), 1, setfml->alloc);
+    loop_t event = func_from_name(setfml, name);
+    node_t *node = NULL;
+    function_t *function = NULL;
 
-    if (!node || !function)
+    if (event == (loop_t)SETFML_FAIL)
+        return (size_t)SETFML_FAIL;
+    node = setfml_nodefromfunc(setfml, name, event);
+    if (!node)
+        return (size_t)SETFML_FAIL;
+    function = (function_t *)node->data;
+    if (!function)
         return (size_t)SETFML_FAIL;
     function->paused = false;
-    function->function = f_before;
-    str_cpy(name, function->name);
-    node->data = (void *)function;
-    if (!f_before) {
-        if (linkedlist_inserthead(setfml->functions[LOOP_DRAW], node)
-            == (size_t)SETFML_FAIL)
-            return (size_t)SETFML_FAIL;
-    } else {
-        if (linkedlist_insert(setfml->functions[LOOP_DRAW], node, &insert_func)
-            == (size_t)SETFML_FAIL)
-        return (size_t)SETFML_FAIL;
-    }
-    function->function = (void*)callback;
     return (size_t)SETFML_SUCC;
 }

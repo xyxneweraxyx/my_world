@@ -7,9 +7,10 @@
 
 #include "./buttonfml.h"
 
-static void ini_textures_and_sprites(button_t *button)
+static size_t ini_textures_and_sprites(button_t *button)
 {
     char t_name[BUFF_TEXT_NAME] = {0};
+    texture_t *texture = NULL;
 
     if (button->textures->idle[0]) {
         str_cat(t_name, 2, button->name, "_idle");
@@ -24,8 +25,10 @@ static void ini_textures_and_sprites(button_t *button)
         setfml_textureadd(button->setfml, t_name, button->textures->click);
     }
     str_cat(t_name, 2, button->name, "_idle");
-    setfml_spriteadd(button->setfml, button->name,
-        (texture_t *)setfml_texturefromname(button->setfml, t_name)->data);
+    texture = (texture_t *)setfml_texturefromname(button->setfml, t_name, true);
+    if (!texture)
+        return (size_t)BUTTONFML_FAIL;
+    setfml_spriteadd(button->setfml, button->name, texture);
 }
 
 static node_t *node_from_name(buttonfml_t *buttonfml,
@@ -68,7 +71,7 @@ button_t *buttonfml_buttoncreate(buttonfml_t *buttonfml, btn_text_t *textures,
     button_t *button = NULL;
     node_t *node = NULL;
 
-    if (!buttonfml || textures || textures->idle[0] || name)
+    if (!buttonfml || !textures || !textures->idle[0] || !name[0])
         return NULL;
     button = c_alloc(sizeof(button_t), 1, buttonfml->alloc);
     node = linkedlist_newnode((void *)button);
@@ -79,15 +82,17 @@ button_t *buttonfml_buttoncreate(buttonfml_t *buttonfml, btn_text_t *textures,
     button->callbacks = callbacks;
     button->buttonfml = buttonfml;
     button->state = BUTTON_IDLE;
-    ini_textures_and_sprites(button);
-    buttonfml_connectcallbacks(button, callbacks);
+    // ON sait qu'il y a un probleme par la avec l'ini de textures
+    if (ini_textures_and_sprites(button) == (size_t)BUTTONFML_FAIL)
+        return NULL;
+    printf("reached down\n");
     return button;
 }
 
 size_t buttonfml_buttonshow(buttonfml_t *buttonfml, char name[BUTTON_NAME])
 {
     button_t *button = buttonfml_buttonfromname(buttonfml, name);
-    
+
     if (!button || !buttonfml || name[0])
         return (size_t)BUTTONFML_FAIL;
     button->is_visible = true;
@@ -98,7 +103,7 @@ size_t buttonfml_buttonshow(buttonfml_t *buttonfml, char name[BUTTON_NAME])
 size_t buttonfml_buttonhide(buttonfml_t *buttonfml, char name[BUTTON_NAME])
 {
     button_t *button = buttonfml_buttonfromname(buttonfml, name);
-    
+
     if (!button || !buttonfml || name[0])
         return (size_t)BUTTONFML_FAIL;
     button->is_visible = false;
@@ -106,16 +111,10 @@ size_t buttonfml_buttonhide(buttonfml_t *buttonfml, char name[BUTTON_NAME])
     return BUTTONFML_SUCC;
 }
 
-size_t buttonfml_buttondestroy(buttonfml_t *buttonfml, char name[BUTTON_NAME])
+static void delete_textures(buttonfml_t *buttonfml, button_t *button)
 {
-    node_t *node = node_from_name(buttonfml, name);
-    button_t *button = NULL;
     char t_name[BUTTON_NAME];
 
-    if (!buttonfml || !name[0] || node)
-        return (size_t)BUTTONFML_FAIL;
-    button = (button_t *)node->data;
-    setfml_spritedel(buttonfml->setfml, button->button->name);
     if (button->textures->idle[0]) {
         str_cat(t_name, 2, button->name, "_idle");
         setfml_texturedel(buttonfml->setfml, t_name);
@@ -128,6 +127,18 @@ size_t buttonfml_buttondestroy(buttonfml_t *buttonfml, char name[BUTTON_NAME])
         str_cat(t_name, 2, button->name, "_click");
         setfml_texturedel(buttonfml->setfml, t_name);
     }
+}
+
+size_t buttonfml_buttondestroy(buttonfml_t *buttonfml, char name[BUTTON_NAME])
+{
+    node_t *node = node_from_name(buttonfml, name);
+    button_t *button = NULL;
+
+    if (!buttonfml || !name[0] || node)
+        return (size_t)BUTTONFML_FAIL;
+    button = (button_t *)node->data;
+    setfml_spritedel(buttonfml->setfml, button->button->name);
+    delete_textures(buttonfml, button);
     linkedlist_remove(buttonfml->buttons, node, true);
     return (size_t)BUTTONFML_SUCC;
 }

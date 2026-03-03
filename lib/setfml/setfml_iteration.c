@@ -54,18 +54,33 @@ static void setfml_updatetime(setfml_t *setfml)
         setfml->state.to_exec.event = true;
 }
 
-static void setfml_execcallback(setfml_t *setfml, loop_t LOOP)
+static void setfml_execcallback(setfml_t *setfml, linkedlist_t *linkedlist)
 {
     node_t *node = NULL;
     function_t *func = NULL;
 
-    if (!setfml || !setfml->functions[LOOP]->head)
+    if (!linkedlist || !setfml || !linkedlist->head)
         return;
-    for (node = setfml->functions[LOOP]->head; node; node = node->next) {
+    for (node = linkedlist->head; node; node = node->next) {
         func = (function_t *)node->data;
         if (func->paused)
             continue;
-        func->return_code = func->function(setfml);
+        func->return_code = func->function(setfml, func->userdata);
+    }
+}
+
+static void setfml_execsingleevent(setfml_t *setfml, sfEventType event)
+{
+    if (setfml->event.type != event)
+        return;
+    setfml_execcallback(setfml, setfml->functions[event]);
+}
+
+static void setfml_execevents(setfml_t *setfml)
+{
+    while (sfRenderWindow_pollEvent(setfml->window, &(setfml->event))) {
+        for (size_t i = 0; i < (size_t)SETFML_EVT_AMT; i++)
+            setfml_execsingleevent(setfml, (sfEventType)i);
     }
 }
 
@@ -73,20 +88,20 @@ static void setfml_handlecallbacks(setfml_t *setfml)
 {
     if (setfml->state.to_exec.event) {
         setfml->state.to_exec.event = false;
-        setfml_execcallback(setfml, LOOP_EVENT);
+        setfml_execevents(setfml);
     }
     if (setfml->state.to_exec.data) {
         setfml->state.to_exec.data = false;
-        setfml_execcallback(setfml, LOOP_DATA);
+        setfml_execcallback(setfml, setfml->functions[LOOP_DATA]);
     }
     if (setfml->state.to_exec.render) {
         setfml->state.to_exec.render = false;
-        setfml_execcallback(setfml, LOOP_RENDER);
+        setfml_execcallback(setfml, setfml->functions[LOOP_RENDER]);
     }
     if (setfml->state.to_exec.draw) {
         setfml->state.to_exec.draw = false;
         sfRenderWindow_clear(setfml->window, sfBlack);
-        setfml_execcallback(setfml, LOOP_DRAW);
+        setfml_execcallback(setfml, setfml->functions[LOOP_DRAW]);
     }
 }
 

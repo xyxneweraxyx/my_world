@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2025
+** str
+** File description:
+** A simple library with string functions.
+*/
+
 #ifndef STRING_LIB
     #define STRING_LIB
 

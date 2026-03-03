@@ -39,14 +39,15 @@
 
     // Hardcoded values
     #define C_ALLOC_BASE 512
+    #define SETFML_EVT_AMT 24
+    #define SETFML_LINKEDLIST_AMT 24 + 3 // All events plus data, render, draw
 
 // Enums
 
 typedef enum loop {
-    LOOP_EVENT,
-    LOOP_DATA,
-    LOOP_RENDER,
-    LOOP_DRAW
+    LOOP_DATA = 24,
+    LOOP_RENDER = 25,
+    LOOP_DRAW = 26,
 } loop_t;
 
 // Typedefs
@@ -110,18 +111,25 @@ typedef struct setfml {
     sfRenderWindow *window;
     linkedlist_t *sprites;
     linkedlist_t *textures;
-    linkedlist_t *functions[4];
-    void *userdata; // par exemple pour moi ça serait l'addresse de mon main
+    linkedlist_t *functions[SETFML_LINKEDLIST_AMT];
+    sfEvent event;
+    void *userdata; // par exemple pour moi ça serait mon main_t
     params_t params;
     state_t state;
 } setfml_t;
 
 typedef struct function {
     char name[BUFF_FUNC_NAME];
-    size_t (*function)(setfml_t *setfml);
+    size_t (*function)(setfml_t *setfml, void *userdata);
+    void *userdata; // Any user data that should be added before the callback.
     size_t return_code;
     bool paused;
 } function_t;
+
+typedef struct setfml_func_comp {
+    size_t (*f_before)(setfml_t *setfml, void *userdata);
+    size_t (*callback)(setfml_t *setfml, void *userdata);
+} setfml_func_comp_t;
 
 // Functions
 
@@ -169,7 +177,7 @@ size_t setfml_windowclose(setfml_t *setfml);
 Deletes a setfml window.
 Returns SETFML_SUCC or SETFML_FAIL.
 */
-size_t setfml_windowdelete(setfml_t *setfml);
+size_t setfml_windowdestroy(setfml_t *setfml);
 
 /*
 Performs a single loop iteration over an open setfml window.
@@ -194,9 +202,10 @@ size_t setfml_texturedel(setfml_t *setfml, char name[BUFF_TEXT_NAME]);
 
 /*
 Finds a texture based on its name.
-Returns the texture's node, or NULL.
+Returns the texture's node/texture data, or NULL.
 */
-node_t *setfml_texturefromname(setfml_t *setfml, char name[BUFF_TEXT_NAME]);
+void *setfml_texturefromname(setfml_t *setfml,
+    char name[BUFF_TEXT_NAME], bool return_node);
 
 /// Sprite functions
 
@@ -214,50 +223,29 @@ Returns SETFML_SUCC or SETFML_FAIL.
 size_t setfml_spritedel(setfml_t *setfml, char name[BUFF_SPRITE_NAME]);
 
 /*
-Finds a texture based on its name.
-Returns the sprite's node, or NULL.
+Finds a sprite based on its name.
+Returns the sprite's node/sprite data, or NULL.
 */
-node_t *setfml_spritefromname(setfml_t *setfml, char name[BUFF_SPRITE_NAME]);
-
-/// Callback add functions
+void *setfml_spritefromname(setfml_t *setfml,
+    char name[BUFF_SPRITE_NAME], bool return_node);
 
 /*
-Adds a callback function to the events (First part of the callbacks)
-If f_before is NULL, the function will be inserted as the new head.
-Those functions typically handle csfml events (Example : Mouse clicked)
+Changes a sprite's texture based on the name.
 Returns SETFML_SUCC or SETFML_FAIL.
 */
-size_t setfml_add_event(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
+size_t setfml_spritechangetexture(setfml_t *setfml, sprite_t *sprite,
+    char texture_name[BUFF_TEXT_NAME]);
+
+/// Callback functions
 
 /*
-Adds a callback function to the data (Second part of the callbacks)
-If f_before is NULL, the function will be inserted as the new head.
-Those functions typically modify the data at run-time (Example : Add currency)
+Adds a callback function to a linked list of events.
+Compatible with sfEventType, or any of the LOOP states (data, render, draw)
+If functions->f_before is NULL, the new function will become the new head.
 Returns SETFML_SUCC or SETFML_FAIL.
 */
-size_t setfml_add_data(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
-
-/*
-Adds a callback function to the rendering (Third part of the callbacks)
-If f_before is NULL, the function will be inserted as the new head.
-Those functions typically modify the rendering (Example : Occuling)
-Returns SETFML_SUCC or SETFML_FAIL.
-*/
-size_t setfml_add_render(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
-
-/*
-Adds a callback function to the drawing (Fourth part of the callbacks)
-If f_before is NULL, the function will be inserted as the new head.
-Those functions typically draw parts of the final render.
-Returns SETFML_SUCC or SETFML_FAIL.
-*/
-size_t setfml_add_draw(setfml_t *setfml, size_t (*f_before)(setfml_t *setfml),
-    char name[BUFF_FUNC_NAME], size_t (*callback)(setfml_t *setfml));
-
-// Callback modify functions
+size_t setfml_add(setfml_t *setfml, setfml_func_comp_t *functions,
+    char name[BUFF_FUNC_NAME], size_t event);
 
 /*
 Deletes a callback function based on its name.
@@ -276,5 +264,14 @@ Resumes a callback function based on its name.
 Returns SETFML_SUCC or SETFML_FAIL.
 */
 size_t setfml_resume(setfml_t *setfml, char name[BUFF_FUNC_NAME]);
+
+/// Api functions
+
+/*
+Attempts to find a function in a given event based on its name.
+Returns the function's node in the event's linked list, or NULL
+*/
+node_t *setfml_nodefromfunc(setfml_t *setfml,
+    char name[BUFF_FUNC_NAME], size_t event);
 
 #endif

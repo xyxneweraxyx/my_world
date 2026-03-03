@@ -7,14 +7,17 @@
 
 #include "./setfml.h"
 
-node_t *setfml_texturefromname(setfml_t *setfml, char name[BUFF_TEXT_NAME])
+void *setfml_texturefromname(setfml_t *setfml,
+    char name[BUFF_TEXT_NAME], bool return_node)
 {
     texture_t *texture = NULL;
 
     for (node_t *node = setfml->textures->head; node; node = node->next) {
         texture = (texture_t *)node->data;
-        if (!str_cmp(texture->name, name))
-            return node;
+        if (!str_cmp(texture->name, name) && return_node)
+            return (void *)node;
+        if (!str_cmp(texture->name, name) && !return_node)
+            return (void *)node->data;
     }
     return NULL;
 }
@@ -45,7 +48,7 @@ size_t setfml_texturedel(setfml_t *setfml, char name[BUFF_TEXT_NAME])
 
     if (!setfml || !setfml->textures)
         return (size_t)SETFML_FAIL;
-    node = setfml_texturefromname(setfml, name);
+    node = setfml_texturefromname(setfml, name, true);
     if (!node)
         return (size_t)SETFML_FAIL;
     texture = (texture_t *)node->data;

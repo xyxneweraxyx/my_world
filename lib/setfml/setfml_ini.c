@@ -39,7 +39,7 @@ setfml_t *setfml_ini(void *userdata)
     setfml->userdata = userdata;
     setfml->sprites = linkedlist_ini();
     setfml->textures = linkedlist_ini();
-    for (size_t i = 0; i < 4; i++)
+    for (size_t i = 0; i < (size_t)SETFML_LINKEDLIST_AMT; i++)
         setfml->functions[i] = linkedlist_ini();
     return setfml;
 }
@@ -72,9 +72,10 @@ size_t setfml_destroy(setfml_t *setfml)
     destroy_sprites(setfml);
     linkedlist_destroy(setfml->sprites, true);
     linkedlist_destroy(setfml->textures, true);
-    for (size_t i = 0; i < 4; i++)
+    for (size_t i = 0; i < (size_t)SETFML_LINKEDLIST_AMT; i++)
         linkedlist_destroy(setfml->functions[i], true);
-    sfRenderWindow_destroy(setfml->window);
+    if (setfml->window)
+        setfml_windowdestroy(setfml);
     c_delete(setfml->alloc, true);
     return (size_t)SETFML_SUCC;
 }
