@@ -27,12 +27,15 @@ size_t setfml_spriteadd(setfml_t *setfml, char name[BUFF_SPRITE_NAME],
 {
     sprite_t *sprite = c_alloc(sizeof(sprite_t), 1, setfml->alloc);
     node_t *node = linkedlist_newnode(sprite);
+    sfVector2u windowsize = sfRenderWindow_getSize(setfml->window);
 
     if (!sprite || !node)
         return (size_t)SETFML_FAIL;
     str_cpy(name, sprite->name);
     sprite->texture = texture;
     sprite->sprite = sfSprite_create();
+    sprite->original_win_x = (size_t)windowsize.x;
+    sprite->original_win_y = (size_t)windowsize.y;
     if (!sprite->sprite)
         return (size_t)SETFML_FAIL;
     setfml_spritechangetexture(setfml, sprite, texture->name);

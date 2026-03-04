@@ -104,6 +104,8 @@ typedef struct sprite {
     char name[BUFF_SPRITE_NAME];
     sfSprite *sprite;
     texture_t *texture;
+    size_t original_win_x;
+    size_t original_win_y;
 } sprite_t;
 
 typedef struct setfml {

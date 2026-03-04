@@ -10,6 +10,15 @@
 static size_t is_mouse_on_button(button_t *button, size_t x, size_t y)
 {
     sfFloatRect rect = sfSprite_getGlobalBounds(button->button->sprite);
+    sfVector2u window = {0, 0};
+
+    if (!button->setfml->window)
+        return (size_t)BUTTONFML_SUCC;
+    window = sfRenderWindow_getSize(button->setfml->window);
+    rect.width = rect.width * ((float)window.x / (float)button->button->original_win_x);
+    rect.height = rect.height * ((float)window.y / (float)button->button->original_win_y);
+    printf("%f %f\n", rect.width, rect.height);
+    printf("%zu %zu\n", x, y);
 
     if (x < (size_t)rect.left || x > (size_t)(rect.left + rect.width))
         return (size_t)BUTTONFML_FAIL;
@@ -54,9 +63,11 @@ static size_t buttonfml_mouseclick(setfml_t *setfml, void *userdata)
         button = (button_t *)node->data;
         if (!button->is_visible || !button->is_clickable)
             continue;
-        if (is_mouse_on_button(button, setfml->event.mouseMove.x,
-            setfml->event.mouseMove.y) == (size_t)BUTTONFML_FAIL)
+        printf("gonna check for click\n");
+        if (is_mouse_on_button(button, (size_t)setfml->event.mouseMove.x,
+            (size_t)setfml->event.mouseMove.y) == (size_t)BUTTONFML_FAIL)
             continue;
+        printf("this is indeed clicked\n");
         button->state = BUTTON_CLICKED;
         if (button->textures->click[0]) {
             str_cat(text_name, 2, button->name, "_click");

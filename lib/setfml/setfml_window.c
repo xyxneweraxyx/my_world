@@ -29,13 +29,18 @@ size_t setfml_windowcreate(setfml_t *setfml)
 
 size_t setfml_windowstart(setfml_t *setfml)
 {
+    sprite_t *sprite = NULL;
+    sfVector2u windowsize = sfRenderWindow_getSize(setfml->window);
     if (!setfml | !setfml->window)
         return (size_t)SETFML_FAIL;
-    sfRenderWindow_display(setfml->window);
-    while (sfRenderWindow_isOpen(setfml->window)) {
-        setfml_iteration(setfml);
-        //setfml_windowclose(setfml);
+    for (node_t *node = setfml->sprites->head; node; node = node->next) {
+        sprite = (sprite_t *)node->data;
+        sprite->original_win_x = windowsize.x;
+        sprite->original_win_y = windowsize.y;
     }
+    sfRenderWindow_display(setfml->window);
+    while (sfRenderWindow_isOpen(setfml->window))
+        setfml_iteration(setfml);
     return (size_t)SETFML_SUCC;
 }
 
