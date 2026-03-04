@@ -35,9 +35,10 @@ typedef struct btn_text {
 } btn_text_t;
 
 typedef struct btn_clbck {
+    size_t (*frame)(setfml_t *setfml, void *userdata); // Triggered every frame
     size_t (*hover)(setfml_t *setfml, void *userdata); // Triggered on hover.
     size_t (*click)(setfml_t *setfml, void *userdata); // Triggered on click.
-    size_t (*frame)(setfml_t *setfml, void *userdata); // Triggered every frame
+    size_t (*rel)(setfml_t *setfml, void *userdata); // Triggered on release.
 } btn_clbck_t;
 
 typedef struct btn_stats {
@@ -100,5 +101,9 @@ size_t buttonfml_buttonhide(buttonfml_t *buttonfml, char name[BUTTON_NAME]);
 button_t *buttonfml_buttonfromname(buttonfml_t *buttonfml,
     char name[BUTTON_NAME]);
 size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml);
+size_t connect_3(buttonfml_t *buttonfml,
+    node_t *node, function_t *function);
+size_t connect_4(buttonfml_t *buttonfml,
+    node_t *node, function_t *function);
 
 #endif

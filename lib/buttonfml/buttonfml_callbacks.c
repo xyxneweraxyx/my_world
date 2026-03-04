@@ -18,24 +18,6 @@ static size_t is_mouse_on_button(button_t *button, size_t x, size_t y)
     return (size_t)BUTTONFML_SUCC;
 }
 
-static size_t buttonfml_reset(setfml_t *setfml, void *userdata)
-{
-    buttonfml_t *buttonfml = (buttonfml_t *)userdata;
-    button_t *button = NULL;
-    char text_name[BUFF_TEXT_NAME] = {0};
-
-    for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
-        if (!button->is_visible || button->state == BUTTON_IDLE)
-            continue;
-        button = (button_t *)node->data;
-        button->state = BUTTON_IDLE;
-        str_cat(text_name, 2, button->name, "_idle");
-        setfml_spritechangetexture(setfml,
-            button->button, text_name);
-    }
-    return (size_t)BUTTONFML_SUCC;
-}
-
 static size_t buttonfml_mousemove(setfml_t *setfml, void *userdata)
 {
     buttonfml_t *buttonfml = (buttonfml_t *)userdata;
@@ -43,21 +25,20 @@ static size_t buttonfml_mousemove(setfml_t *setfml, void *userdata)
     char text_name[BUFF_TEXT_NAME] = {0};
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
-        if (!button->is_visible)
-            continue;
         button = (button_t *)node->data;
+        if (!button->is_visible || button->state != BUTTON_IDLE)
+            continue;
         if (is_mouse_on_button(button, (size_t)setfml->event.mouseMove.x,
             (size_t)setfml->event.mouseMove.y) == (size_t)BUTTONFML_FAIL)
             continue;
         if (button->state == BUTTON_IDLE)
             button->state = BUTTON_HOVERED;
-        printf("button is hovered!\n");
         if (button->textures->hover[0]) {
             str_cat(text_name, 2, button->name, "_hover");
             setfml_spritechangetexture(setfml,
                 button->button, text_name);
         }
-        if (button->callbacks->frame)
+        if (button->callbacks->hover)
             button->callbacks->hover(setfml, userdata);
     }
     return (size_t)BUTTONFML_SUCC;
@@ -70,20 +51,19 @@ static size_t buttonfml_mouseclick(setfml_t *setfml, void *userdata)
     char text_name[BUFF_TEXT_NAME] = {0};
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
+        button = (button_t *)node->data;
         if (!button->is_visible || !button->is_clickable)
             continue;
-        button = (button_t *)node->data;
         if (is_mouse_on_button(button, setfml->event.mouseMove.x,
             setfml->event.mouseMove.y) == (size_t)BUTTONFML_FAIL)
             continue;
         button->state = BUTTON_CLICKED;
-        printf("button is clicked!\n");
         if (button->textures->click[0]) {
             str_cat(text_name, 2, button->name, "_click");
             setfml_spritechangetexture(setfml,
                 button->button, text_name);
         }
-        if (button->callbacks->frame)
+        if (button->callbacks->click)
             button->callbacks->click(setfml, userdata);
     }
     return (size_t)BUTTONFML_SUCC;
@@ -95,13 +75,9 @@ static size_t buttonfml_frame(setfml_t *setfml, void *userdata)
     button_t *button = NULL;
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
+        button = (button_t *)node->data;
         if (!button->is_visible)
             continue;
-        button = (button_t *)node->data;
-        if (is_mouse_on_button(button, setfml->event.mouseMove.x,
-            setfml->event.mouseMove.y) == (size_t)BUTTONFML_FAIL)
-            continue;
-        button->state = BUTTON_CLICKED;
         if (button->callbacks->frame)
             button->callbacks->frame(setfml, userdata);
     }
@@ -114,20 +90,18 @@ static size_t buttonfml_draw(setfml_t *setfml, void *userdata)
     button_t *button = NULL;
 
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
+        button = (button_t *)node->data;
         if (!button->is_visible)
             continue;
-        button = (button_t *)node->data;
         sfRenderWindow_drawSprite(setfml->window,
             button->button->sprite, NULL);
     }
     return (size_t)BUTTONFML_SUCC;
 }
 
-size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
+static size_t connect_1(buttonfml_t *buttonfml,
+    node_t *node, function_t *function)
 {
-    node_t *node = NULL;
-    function_t *function = NULL;
-
     setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
         &buttonfml_draw}, "buttonfml_draw", LOOP_DRAW);
     node = setfml_nodefromfunc(buttonfml->setfml, "buttonfml_draw",
@@ -136,7 +110,6 @@ size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
         return (size_t)BUTTONFML_FAIL;
     function = (function_t *)node->data;
     function->userdata = (void *)buttonfml;
-
     setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
         &buttonfml_mousemove}, "buttonfml_mousemove", sfEvtMouseMoved);
     node = setfml_nodefromfunc(buttonfml->setfml, "buttonfml_mousemove",
@@ -145,7 +118,12 @@ size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
         return (size_t)BUTTONFML_FAIL;
     function = (function_t *)node->data;
     function->userdata = (void *)buttonfml;
+    return (size_t)BUTTONFML_SUCC;
+}
 
+static size_t connect_2(buttonfml_t *buttonfml,
+    node_t *node, function_t *function)
+{
     setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
         &buttonfml_mouseclick}, "buttonfml_mouseclick", sfEvtMouseButtonPressed);
     node = setfml_nodefromfunc(buttonfml->setfml, "buttonfml_mouseclick",
@@ -154,7 +132,6 @@ size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
         return (size_t)BUTTONFML_FAIL;
     function = (function_t *)node->data;
     function->userdata = (void *)buttonfml;
-
     setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
         &buttonfml_frame}, "buttonfml_frame", LOOP_RENDER);
     node = setfml_nodefromfunc(buttonfml->setfml, "buttonfml_frame",
@@ -163,15 +140,21 @@ size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
         return (size_t)BUTTONFML_FAIL;
     function = (function_t *)node->data;
     function->userdata = (void *)buttonfml;
+    return (size_t)BUTTONFML_SUCC;
+}
 
-    setfml_add(buttonfml->setfml, &(setfml_func_comp_t){NULL,
-        &buttonfml_reset}, "buttonfml_reset", sfEvtMouseMoved);
-    node = setfml_nodefromfunc(buttonfml->setfml, "buttonfml_reset",
-        sfEvtMouseMoved);
-    if (!node)
+size_t buttonfml_connectcallbacks(buttonfml_t *buttonfml)
+{
+    node_t *node = NULL;
+    function_t *function = NULL;
+
+    if (connect_1(buttonfml, node, function) == (size_t)BUTTONFML_FAIL)
         return (size_t)BUTTONFML_FAIL;
-    function = (function_t *)node->data;
-    function->userdata = (void *)buttonfml;
-
+    if (connect_2(buttonfml, node, function) == (size_t)BUTTONFML_FAIL)
+        return (size_t)BUTTONFML_FAIL;
+    if (connect_3(buttonfml, node, function) == (size_t)BUTTONFML_FAIL)
+        return (size_t)BUTTONFML_FAIL;
+    if (connect_4(buttonfml, node, function) == (size_t)BUTTONFML_FAIL)
+        return (size_t)BUTTONFML_FAIL;
     return (size_t)BUTTONFML_SUCC;
 }

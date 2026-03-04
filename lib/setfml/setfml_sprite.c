@@ -55,7 +55,7 @@ size_t setfml_spritedel(setfml_t *setfml, char name[BUFF_SPRITE_NAME])
     sprite = (sprite_t *)node->data;
     if (sprite->sprite)
         sfSprite_destroy(sprite->sprite);
-    linkedlist_remove(setfml->sprites, node, true);
+    linkedlist_remove(setfml->sprites, node, false);
     return (size_t)SETFML_SUCC;
 }
 

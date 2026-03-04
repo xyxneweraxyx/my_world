@@ -155,6 +155,6 @@ size_t buttonfml_buttondestroy(buttonfml_t *buttonfml, char name[BUTTON_NAME])
     button = (button_t *)node->data;
     setfml_spritedel(buttonfml->setfml, button->button->name);
     delete_textures(buttonfml, button);
-    linkedlist_remove(buttonfml->buttons, node, true);
+    linkedlist_remove(buttonfml->buttons, node, false);
     return (size_t)BUTTONFML_SUCC;
 }

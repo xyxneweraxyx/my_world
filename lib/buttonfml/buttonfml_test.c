@@ -1,31 +1,26 @@
 #include "./buttonfml.h"
 
-size_t mouse_moved(setfml_t *setfml, void *userdata)
+size_t scale_down(setfml_t *setfml, void *userdata)
 {
-    printf("%d %d\n", setfml->event.mouseMove.x, setfml->event.mouseMove.y);
-    return (size_t)SETFML_SUCC;
+    buttonfml_t *buttonfml = (buttonfml_t *)userdata;
+    button_t *button = buttonfml_buttonfromname(buttonfml, "my_button");
+
+    sfSprite_setScale(button->button->sprite, (sfVector2f){0.3, 0.3});
+    return (size_t)BUTTONFML_SUCC;
 }
 
-size_t mouse_moved_2(setfml_t *setfml, void *userdata)
+size_t scale_up(setfml_t *setfml, void *userdata)
 {
-    printf("this is after the mouse movement!\n");
-    return (size_t)SETFML_SUCC;
+    printf("exec\n");
+    buttonfml_t *buttonfml = (buttonfml_t *)userdata;
+    button_t *button = buttonfml_buttonfromname(buttonfml, "my_button");
+
+    sfSprite_setScale(button->button->sprite, (sfVector2f){1, 1});
+    return (size_t)BUTTONFML_SUCC;
 }
 
-size_t mouse_click(setfml_t *setfml, void *userdata)
-{
-    printf("mouse click!\n");
-    return (size_t)SETFML_SUCC;
-}
-
-size_t draw_sprite(setfml_t *setfml, void *userdata)
-{
-    sprite_t *sprite = setfml_spritefromname(setfml, "test", false);
-    sfSprite_setPosition(sprite->sprite, (sfVector2f){100, 100});
-    sfRenderWindow_drawSprite(setfml->window, sprite->sprite, NULL);
-    return (size_t)SETFML_SUCC;
-}
-
+// Je remarque un manque de callbacks
+// Y'a frame, hover, click, rel, mais ça serait pas mal d'avoir frame, hover, unhover, hovering (constant pendant l'hover) au total
 int main(void)
 {
     setfml_t *setfml = setfml_ini(NULL);
@@ -33,9 +28,16 @@ int main(void)
 
     setfml_fillparams(setfml);
 
+    // Attention cet enchainement cause un probleme, click et rel semblent marcher mais le frame et l'hover ont des problemes
+    // Surement un probleme de state reset
     button_t *button = buttonfml_buttoncreate(buttonfml,
-        &(btn_text_t){"./assets/images/thug.png", "./assets/images/thug2.png", ""},
-        &(btn_clbck_t){NULL, NULL, NULL},
+        &(btn_text_t){"./assets/images/thug.png",
+            "./assets/images/thug2.png",
+            "./assets/images/traumatisme.png"},
+        &(btn_clbck_t){&scale_down,
+            &scale_up,
+            NULL,
+            NULL},
         "my_button");
 
     setfml_windowcreate(setfml);

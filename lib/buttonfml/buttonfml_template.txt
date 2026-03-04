@@ -1,0 +1,12 @@
+Ci-joint des templates qui permettent de copier-coller rapidement certaines parties cruciales de buttonfml.
+
+Voici une fonction qui peut s'ajouter en tant que callback dans la fonction "buttonfml_buttoncreate" (argument : btn_clbk_t callback).
+Donnez l'addresse de la fonction (ici, cela serait "&ma_fonction_de_bouton") pour l'action que vous voulez associer à cette fonction.
+Veuillez noter que ici, "userdata" sera toujours buttonfml (c'est à dire, le "buttonfml" créer plus tôt, avec "buttonfml_ini").
+La fonction ne peut que return BUTTONFML_FAIL ou BUTTONFML_SUCC.
+
+size_t ma_fonction_de_bouton(setfml_t *setfml, void *userdata)
+{
+    buttonfml_t *buttonfml = (buttonfml_t *)userdata;
+    return (size_t)BUTTONFML_SUCC;
+}

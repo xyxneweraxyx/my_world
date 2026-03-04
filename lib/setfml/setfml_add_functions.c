@@ -82,7 +82,7 @@ size_t setfml_del(setfml_t *setfml, char name[BUFF_FUNC_NAME])
     node = setfml_nodefromfunc(setfml, name, event);
     if (!node)
         return (size_t)SETFML_FAIL;
-    linkedlist_remove(setfml->functions[event], node, true);
+    linkedlist_remove(setfml->functions[event], node, false);
     return (size_t)SETFML_SUCC;
 }
 
