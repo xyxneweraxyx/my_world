@@ -71,19 +71,58 @@ static size_t move_down(setfml_t *setfml, void *userdata)
     return (size_t)EXIT_SUCC;
 }
 
-size_t ini_camera_callbacks(main_t *main, void *userdata)
+static size_t rotate_yaw(setfml_t *setfml, void *userdata)
 {
-    setfml_add(main->setfml, &(setfml_func_comp_t){NULL, &move_forward},
+    main_t *main = (main_t *)setfml->userdata;
+
+    if (setfml->event.key.code == sfKeyLeft)
+        main->render.yaw -= 0.05f;
+    if (setfml->event.key.code == sfKeyRight)
+        main->render.yaw += 0.05f;
+    return (size_t)EXIT_SUCC;
+}
+
+static size_t rotate_pitch(setfml_t *setfml, void *userdata)
+{
+    main_t *main = (main_t *)setfml->userdata;
+
+    if (setfml->event.key.code == sfKeyUp)
+        main->render.pitch -= 0.05f;
+    if (setfml->event.key.code == sfKeyDown)
+        main->render.pitch += 0.05f;
+    return (size_t)EXIT_SUCC;
+}
+
+static size_t change_fov(setfml_t *setfml, void *userdata)
+{
+    main_t *main = (main_t *)setfml->userdata;
+
+    if (setfml->event.key.code == sfKeyO)
+        main->render.fov += 50;
+    if (setfml->event.key.code == sfKeyP)
+        main->render.fov -= 50;
+    return (size_t)EXIT_SUCC;
+}
+
+size_t ini_camera_callbacks(setfml_t *setfml, void *userdata)
+{
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &move_forward},
         "move_forward", sfEvtKeyPressed);
-    setfml_add(main->setfml, &(setfml_func_comp_t){NULL, &move_backward},
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &move_backward},
         "move_backward", sfEvtKeyPressed);
-    setfml_add(main->setfml, &(setfml_func_comp_t){NULL, &move_left},
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &move_left},
         "move_left", sfEvtKeyPressed);
-    setfml_add(main->setfml, &(setfml_func_comp_t){NULL, &move_right},
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &move_right},
         "move_right", sfEvtKeyPressed);
-    setfml_add(main->setfml, &(setfml_func_comp_t){NULL, &move_up},
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &move_up},
         "move_up", sfEvtKeyPressed);
-    setfml_add(main->setfml, &(setfml_func_comp_t){NULL, &move_down},
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &move_down},
         "move_down", sfEvtKeyPressed);
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &rotate_yaw},
+        "rotate_yaw", sfEvtKeyPressed);
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &rotate_pitch},
+        "rotate_pitch", sfEvtKeyPressed);
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &change_fov},
+        "change_fov", sfEvtKeyPressed);
     return (size_t)EXIT_SUCC;
 }

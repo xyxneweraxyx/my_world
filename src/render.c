@@ -44,7 +44,7 @@ static sfVector2f project(main_t *main, vec3_t *world)
     vec3_t point = translate(main, world);
 
     point = rotate_yaw(&point, main->render.yaw);
-    point = rotate_pitch(&point, main->render.pitch);
+    point = rotate_pitch(&point, -1 * main->render.pitch);
     if (point.z <= 0.1f)
         return (sfVector2f){-99999, -99999};
     return (sfVector2f){
@@ -108,6 +108,8 @@ size_t draw(setfml_t *setfml, void *userdata)
     main_t *main = (main_t *)setfml->userdata;
     render_t *r = &main->render;
 
+    if (main->state != MYWORLD_EDITOR)
+        return (size_t)EXIT_SUCC;
     for (size_t y = r->square_amount_y - 2; y < r->square_amount_y; y--)
         for (size_t x = 0; x < r->square_amount_x - 1; x++)
             draw_square(main, x, y);

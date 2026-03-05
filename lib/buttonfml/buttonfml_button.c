@@ -81,25 +81,40 @@ button_t *buttonfml_buttonfromname(buttonfml_t *buttonfml,
     return NULL;
 }
 
-button_t *buttonfml_buttoncreate(buttonfml_t *buttonfml, btn_text_t *textures,
-    btn_clbck_t *callbacks, char name[BUTTON_NAME])
+static button_t *ini_button_data(buttonfml_t *buttonfml,
+    btn_text_t *textures, btn_clbck_t *callbacks, char name[BUTTON_NAME])
 {
-    button_t *button = NULL;
-    node_t *node = NULL;
+    button_t *button = c_alloc(sizeof(button_t), 1, buttonfml->alloc);
+    node_t *node = linkedlist_newnode((void *)button);
 
-    if (!buttonfml || !textures || !textures->idle[0] || !name[0])
+    if (!button || !node)
         return NULL;
-    button = c_alloc(sizeof(button_t), 1, buttonfml->alloc);
-    node = linkedlist_newnode((void *)button);
-    linkedlist_inserthead(buttonfml->buttons, node);
-    str_cpy(name, button->name);
+    button->textures = c_alloc(sizeof(btn_text_t), 1, buttonfml->alloc);
+    button->callbacks = c_alloc(sizeof(btn_clbck_t), 1, buttonfml->alloc);
+    if (!button->textures || !button->callbacks)
+        return NULL;
+    *button->textures = *textures;
+    *button->callbacks = *callbacks;
     button->setfml = buttonfml->setfml;
-    button->textures = textures;
-    button->callbacks = callbacks;
     button->buttonfml = buttonfml;
     button->state = BUTTON_IDLE;
     button->is_visible = true;
     button->is_clickable = true;
+    linkedlist_inserthead(buttonfml->buttons, node);
+    str_cpy(name, button->name);
+    return button;
+}
+
+button_t *buttonfml_buttoncreate(buttonfml_t *buttonfml, btn_text_t *textures,
+    btn_clbck_t *callbacks, char name[BUTTON_NAME])
+{
+    button_t *button = NULL;
+
+    if (!buttonfml || !textures || !textures->idle[0] || !name[0])
+        return NULL;
+    button = ini_button_data(buttonfml, textures, callbacks, name);
+    if (!button)
+        return NULL;
     if (ini_textures_and_sprites(button) == (size_t)BUTTONFML_FAIL)
         return NULL;
     return button;

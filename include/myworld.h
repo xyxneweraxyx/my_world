@@ -98,6 +98,6 @@ size_t ini_buttons(main_t *main);
 size_t ini_callbacks(main_t *main);
 size_t draw(setfml_t *setfml, void *userdata);
 size_t ini_draw_callbacks(setfml_t *setfml, void *userdata);
-size_t ini_camera_callbacks(main_t *main, void *userdata);
+size_t ini_camera_callbacks(setfml_t *setfml, void *userdata);
 
 #endif

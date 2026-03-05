@@ -38,7 +38,7 @@ static size_t ini_sprites(main_t *main)
 
 static void ini_values(main_t *main)
 {
-        main->state = MYWORLD_EDITOR;
+        main->state = MYWORLD_MENU;
     main->render.zoom = 50;
     main->render.square_amount_x = 32;
     main->render.square_amount_y = 32;

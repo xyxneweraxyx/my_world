@@ -17,8 +17,6 @@ static size_t is_mouse_on_button(button_t *button, size_t x, size_t y)
     window = sfRenderWindow_getSize(button->setfml->window);
     rect.width = rect.width * ((float)window.x / (float)button->button->original_win_x);
     rect.height = rect.height * ((float)window.y / (float)button->button->original_win_y);
-    printf("%f %f\n", rect.width, rect.height);
-    printf("%zu %zu\n", x, y);
 
     if (x < (size_t)rect.left || x > (size_t)(rect.left + rect.width))
         return (size_t)BUTTONFML_FAIL;

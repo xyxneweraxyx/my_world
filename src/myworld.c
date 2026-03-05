@@ -44,7 +44,6 @@ int main(void)
 
     if (!main)
         return (size_t)EXIT_FAIL;
-    main->setfml->params.time.draw = 500 * MILLI_TO_NANO;
     if (ini_csfml(main) == (size_t)EXIT_FAIL)
         return (size_t)EXIT_FAIL;
     if (ini_callbacks(main) == (size_t)EXIT_FAIL)
