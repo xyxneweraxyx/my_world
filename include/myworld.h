@@ -54,6 +54,7 @@
 typedef enum myworld_state {
     MYWORLD_MENU,
     MYWORLD_EDITOR,
+    MYWORLD_SETTING,
 } myworld_state_t;
 
 typedef struct csfml {

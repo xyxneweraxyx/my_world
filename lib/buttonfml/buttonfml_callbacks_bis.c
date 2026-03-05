@@ -86,8 +86,10 @@ static size_t buttonfml_reset(setfml_t *setfml, void *userdata)
         button = (button_t *)node->data;
         if (!button->is_visible || button->state == BUTTON_IDLE)
             continue;
+        text_name[0] = 0;
         reset_state(setfml, button, text_name, false);
-        setfml_spritechangetexture(setfml, button->button, text_name);
+        if (text_name[0])
+            setfml_spritechangetexture(setfml, button->button, text_name);
     }
     return (size_t)BUTTONFML_SUCC;
 }

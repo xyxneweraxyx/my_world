@@ -6,6 +6,7 @@
 */
 
 #include "./../../include/myworld.h"
+#include "./../callbacks/callbacks.h"
 
 static void ini_button_data(main_t *main)
 {
@@ -25,13 +26,16 @@ size_t ini_buttons(main_t *main)
 {
     button_t *create_map = buttonfml_buttoncreate(main->buttonfml,
         &(btn_text_t){AST_CREATEMAP, "", ""},
-        &(btn_clbck_t){NULL, NULL, NULL, NULL}, "create_map");
+        &(btn_clbck_t){&menu_frame, NULL, &click_create_map, NULL},
+        "create_map");
     button_t *exit = buttonfml_buttoncreate(main->buttonfml,
         &(btn_text_t){AST_EXIT, "", ""},
-        &(btn_clbck_t){NULL, NULL, NULL, NULL}, "exit");
+        &(btn_clbck_t){&menu_frame, NULL, &click_exit, NULL},
+        "exit");
     button_t *setting = buttonfml_buttoncreate(main->buttonfml,
         &(btn_text_t){AST_SETTING, "", ""},
-        &(btn_clbck_t){NULL, NULL, NULL, NULL}, "setting");
+        &(btn_clbck_t){&menu_frame, NULL, &click_setting, NULL},
+        "setting");
 
     if (!create_map || !exit || !setting)
         return (size_t)EXIT_FAIL;
