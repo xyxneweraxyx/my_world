@@ -1,4 +1,4 @@
-#include "./buttonfml.h"
+/*#include "./buttonfml.h"
 
 size_t scale_down(setfml_t *setfml, void *userdata)
 {
@@ -71,4 +71,4 @@ int main(void)
 
     buttonfml_destroy(buttonfml);
     setfml_destroy(setfml);
-}
+}*/

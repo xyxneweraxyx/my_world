@@ -22,6 +22,7 @@
     // Return codes
     #define SETFML_SUCC 0
     #define SETFML_FAIL -1
+    #define SETFML_WINDOWCLOSING -2
 
     // Buffer lengths
     #define BUFF_FUNC_NAME 32
@@ -92,6 +93,7 @@ typedef struct state {
     time_elapsed_t time_elapsed;
     time_elapsed_t last_exec;
     loop_exec_t to_exec;
+    bool is_closing;
 } state_t;
 
 typedef struct texture {

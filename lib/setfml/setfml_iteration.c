@@ -59,13 +59,15 @@ static void setfml_execcallback(setfml_t *setfml, linkedlist_t *linkedlist)
     node_t *node = NULL;
     function_t *func = NULL;
 
-    if (!linkedlist || !setfml || !linkedlist->head)
+    if (!linkedlist || !setfml || !linkedlist->head || setfml->state.is_closing)
         return;
     for (node = linkedlist->head; node; node = node->next) {
         func = (function_t *)node->data;
         if (func->paused)
             continue;
         func->return_code = func->function(setfml, func->userdata);
+        if (func->return_code == (size_t)SETFML_WINDOWCLOSING)
+            setfml->state.is_closing = true;
     }
 }
 

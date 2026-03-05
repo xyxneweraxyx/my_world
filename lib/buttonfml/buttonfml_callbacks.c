@@ -47,7 +47,7 @@ static size_t buttonfml_mousemove(setfml_t *setfml, void *userdata)
             setfml_spritechangetexture(setfml,
                 button->button, text_name);
         }
-        if (button->callbacks->hover)
+        if (button->callbacks && button->callbacks->hover)
             button->callbacks->hover(setfml, userdata);
     }
     return (size_t)BUTTONFML_SUCC;
@@ -64,8 +64,8 @@ static size_t buttonfml_mouseclick(setfml_t *setfml, void *userdata)
         if (!button->is_visible || !button->is_clickable)
             continue;
         printf("gonna check for click\n");
-        if (is_mouse_on_button(button, (size_t)setfml->event.mouseMove.x,
-            (size_t)setfml->event.mouseMove.y) == (size_t)BUTTONFML_FAIL)
+        if (is_mouse_on_button(button, (size_t)setfml->event.mouseButton.x,
+            (size_t)setfml->event.mouseButton.y) == (size_t)BUTTONFML_FAIL)
             continue;
         printf("this is indeed clicked\n");
         button->state = BUTTON_CLICKED;
@@ -74,7 +74,7 @@ static size_t buttonfml_mouseclick(setfml_t *setfml, void *userdata)
             setfml_spritechangetexture(setfml,
                 button->button, text_name);
         }
-        if (button->callbacks->click)
+        if (button->callbacks && button->callbacks->click)
             button->callbacks->click(setfml, userdata);
     }
     return (size_t)BUTTONFML_SUCC;
@@ -89,7 +89,8 @@ static size_t buttonfml_frame(setfml_t *setfml, void *userdata)
         button = (button_t *)node->data;
         if (!button->is_visible)
             continue;
-        if (button->callbacks->frame)
+        printf("gonna exec, button name %s button callbacks address %p %p\n", button->name, button->callbacks, button->callbacks->frame);
+        if (button->callbacks && button->callbacks->frame)
             button->callbacks->frame(setfml, userdata);
     }
     return (size_t)BUTTONFML_SUCC;

@@ -109,7 +109,7 @@ size_t buttonfml_buttonshow(buttonfml_t *buttonfml, char name[BUTTON_NAME])
 {
     button_t *button = buttonfml_buttonfromname(buttonfml, name);
 
-    if (!button || !buttonfml || name[0])
+    if (!button || !buttonfml || !name[0])
         return (size_t)BUTTONFML_FAIL;
     button->is_visible = true;
     button->is_clickable = true;
@@ -120,7 +120,7 @@ size_t buttonfml_buttonhide(buttonfml_t *buttonfml, char name[BUTTON_NAME])
 {
     button_t *button = buttonfml_buttonfromname(buttonfml, name);
 
-    if (!button || !buttonfml || name[0])
+    if (!button || !buttonfml || !name[0])
         return (size_t)BUTTONFML_FAIL;
     button->is_visible = false;
     button->is_clickable = false;

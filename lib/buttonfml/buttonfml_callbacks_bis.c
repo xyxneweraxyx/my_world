@@ -29,7 +29,7 @@ static void reset_state_callback(setfml_t *setfml,
     btn_state_t state, button_t *button)
 {
     if (state == BUTTON_CLICKED && button->state != BUTTON_CLICKED
-        && button->callbacks->rel)
+        && button->callbacks && button->callbacks->rel)
         button->callbacks->rel(setfml, (void *)button->buttonfml);
 }
 
@@ -70,7 +70,7 @@ static size_t buttonfml_release(setfml_t *setfml, void *userdata)
             continue;
         reset_state(setfml, button, text_name, true);
         setfml_spritechangetexture(setfml, button->button, text_name);
-        if (button->callbacks->rel)
+        if (button->callbacks && button->callbacks->rel)
             button->callbacks->rel(setfml, userdata);
     }
     return (size_t)BUTTONFML_SUCC;

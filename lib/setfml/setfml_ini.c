@@ -7,11 +7,36 @@
 
 #include "./setfml.h"
 
+static size_t clamp(size_t x, size_t min, size_t max)
+{
+    if (x < min)
+        return min;
+    if (x > max)
+        return max;
+    return x;
+}
+
 static size_t setfml_closewindow(setfml_t *setfml, void *userdata)
 {
-    setfml_t *setfml2 = (setfml_t *)userdata;
-
     setfml_windowclose(setfml);
+    return (size_t)SETFML_WINDOWCLOSING;
+}
+
+static size_t setfml_resizewindow(setfml_t *setfml, void *userdata)
+{
+    sfVector2u realsize = {0, 0};
+    sfVector2u fixedsize = {0, 0};
+
+    if (!setfml->window)
+        return (size_t)SETFML_FAIL;
+    realsize = sfRenderWindow_getSize(setfml->window);
+    fixedsize = sfRenderWindow_getSize(setfml->window);
+    fixedsize.x = clamp(fixedsize.x, setfml->params.window.min_scr_res[0],
+        setfml->params.window.max_scr_res[0]);
+    fixedsize.y = clamp(fixedsize.y, setfml->params.window.min_scr_res[1],
+        setfml->params.window.max_scr_res[1]);
+    if (fixedsize.x != realsize.x || fixedsize.y != realsize.y)
+        sfRenderWindow_setSize(setfml->window, fixedsize);
     return (size_t)SETFML_SUCC;
 }
 
@@ -20,8 +45,8 @@ void setfml_fillparams(setfml_t *setfml)
     if (!setfml)
         return;
     setfml->params.window.fps = (uint8_t)60;
-    setfml->params.window.max_scr_res[0] = (uint16_t)800;
-    setfml->params.window.max_scr_res[1] = (uint16_t)600;
+    setfml->params.window.max_scr_res[0] = (uint16_t)1920;
+    setfml->params.window.max_scr_res[1] = (uint16_t)1080;
     setfml->params.window.min_scr_res[0] = (uint16_t)800;
     setfml->params.window.min_scr_res[1] = (uint16_t)600;
     setfml->params.window.settings = NULL;
@@ -49,7 +74,11 @@ setfml_t *setfml_ini(void *userdata)
     setfml->textures = linkedlist_ini();
     for (size_t i = 0; i < (size_t)SETFML_LINKEDLIST_AMT; i++)
         setfml->functions[i] = linkedlist_ini();
-    setfml_add(setfml, &(setfml_func_comp_t){NULL, &setfml_closewindow}, "closewindow", sfEvtClosed);
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &setfml_closewindow},
+        "closewindow", sfEvtClosed);
+    setfml_add(setfml, &(setfml_func_comp_t){NULL, &setfml_resizewindow},
+        "setfml_resizewindow", sfEvtResized);
+    setfml_fillparams(setfml);
     return setfml;
 }
 
