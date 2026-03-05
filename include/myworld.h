@@ -41,8 +41,16 @@
     #define AST_CREATEMAP "./assets/images/create_map.png"
     #define AST_EXIT "./assets/images/exit.png"
     #define AST_SETTING "./assets/images/setting.png"
+    #define AST_EDITORBACKGROUND "./assets/images/editorbackground.jpg"
+    #define AST_GRASSTEXTURE "./assets/images/grasstexture.png"
+    #define AST_ROCKTEXTURE "./assets/images/rocktexture.jpeg"
 
 // Typedefs
+
+typedef enum myworld_state {
+    MYWORLD_MENU,
+    MYWORLD_EDITOR,
+} myworld_state_t;
 
 typedef struct csfml {
     sfRenderWindow *window;
@@ -50,12 +58,21 @@ typedef struct csfml {
     sfEvent event;
 } csfml_t;
 
+typedef struct render {
+    float **height;
+    sfVector2f origin;
+    float zoom;
+    size_t square_amount_x;
+    size_t square_amount_y;
+} render_t;
+
 typedef struct main {
     c_alloc_t *alloc;
     setfml_t *setfml;
     buttonfml_t *buttonfml;
-    size_t **height;
+    render_t render;
     csfml_t csfml;
+    myworld_state_t state;
 } main_t;
 
 // Functions
@@ -63,5 +80,6 @@ typedef struct main {
 size_t ini_csfml(main_t *main);
 size_t ini_buttons(main_t *main);
 size_t ini_callbacks(main_t *main);
+size_t draw(setfml_t *setfml, void *userdata);
 
 #endif

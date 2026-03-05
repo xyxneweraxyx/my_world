@@ -9,7 +9,7 @@
 
 size_t ini_buttons(main_t *main)
 {
-    button_t *create_map = buttonfml_buttoncreate(main->buttonfml,
+    /*button_t *create_map = buttonfml_buttoncreate(main->buttonfml,
         &(btn_text_t){AST_CREATEMAP, "", ""},
         &(btn_clbck_t){NULL, NULL, NULL, NULL},
         "create_map");
@@ -25,9 +25,7 @@ size_t ini_buttons(main_t *main)
         &(btn_text_t){AST_BACKHOME, "", ""},
         &(btn_clbck_t){NULL, NULL, NULL, NULL},
         "back_home");
-    if (!create_map || !exit || !setting || ! back_home)
-        return (size_t)EXIT_FAIL;
-    printf("%p\n", back_home->callbacks->frame);
-    printf("%p\n", setting->callbacks->frame);
+    if (!create_map || !exit || !setting || !back_home)
+        return (size_t)EXIT_FAIL;*/
     return (size_t)EXIT_SUCC;
 }

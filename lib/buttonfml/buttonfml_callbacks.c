@@ -89,7 +89,6 @@ static size_t buttonfml_frame(setfml_t *setfml, void *userdata)
         button = (button_t *)node->data;
         if (!button->is_visible)
             continue;
-        printf("gonna exec, button name %s button callbacks address %p %p\n", button->name, button->callbacks, button->callbacks->frame);
         if (button->callbacks && button->callbacks->frame)
             button->callbacks->frame(setfml, userdata);
     }
