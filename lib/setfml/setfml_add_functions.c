@@ -38,7 +38,7 @@ static loop_t func_from_name(setfml_t *setfml, char name[BUFF_FUNC_NAME])
 {
     node_t *node = NULL;
 
-    for (loop_t event = 0; event < SETFML_EVT_AMT; event++) {
+    for (loop_t event = 0; event < SETFML_LINKEDLIST_AMT; event++) {
         node = setfml_nodefromfunc(setfml, name, event);
         if (node)
             return event;

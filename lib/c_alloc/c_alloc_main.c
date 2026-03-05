@@ -100,7 +100,8 @@ void c_free(void *__p, c_alloc_t *arr)
             printf("ERROR: Attempted to free already freed pointer %p\n", __p);
         return;
     }
-    printf("FREE : Freed pointer %p.\n", arr->addresses[pos]);
+    if (arr->debug)
+        printf("FREE : Freed pointer %p.\n", arr->addresses[pos]);
     arr->addresses[pos] = NULL;
     free(__p);
 }

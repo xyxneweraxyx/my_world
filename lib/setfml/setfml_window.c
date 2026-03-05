@@ -31,7 +31,7 @@ size_t setfml_windowstart(setfml_t *setfml)
 {
     sprite_t *sprite = NULL;
     sfVector2u windowsize = sfRenderWindow_getSize(setfml->window);
-    if (!setfml | !setfml->window)
+    if (!setfml || !setfml->window)
         return (size_t)SETFML_FAIL;
     for (node_t *node = setfml->sprites->head; node; node = node->next) {
         sprite = (sprite_t *)node->data;
@@ -46,7 +46,7 @@ size_t setfml_windowstart(setfml_t *setfml)
 
 size_t setfml_windowclose(setfml_t *setfml)
 {
-    if (!setfml | !setfml->window)
+    if (!setfml || !setfml->window)
         return (size_t)SETFML_FAIL;
     sfRenderWindow_close(setfml->window);
     return (size_t)SETFML_SUCC;
@@ -54,7 +54,7 @@ size_t setfml_windowclose(setfml_t *setfml)
 
 size_t setfml_windowdestroy(setfml_t *setfml)
 {
-    if (!setfml | !setfml->window)
+    if (!setfml || !setfml->window)
         return (size_t)SETFML_FAIL;
     sfRenderWindow_destroy(setfml->window);
     setfml->window = NULL;

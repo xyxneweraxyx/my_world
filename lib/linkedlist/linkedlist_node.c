@@ -94,7 +94,7 @@ size_t linkedlist_removecomp(linkedlist_t *linkedlist,
 
 node_t *linkedlist_find(linkedlist_t *linkedlist, bool (*comp)(node_t *node))
 {
-    if (!linkedlist || linkedlist->head || !comp)
+    if (!linkedlist || !linkedlist->head || !comp)
         return NULL;
     for (node_t *node = linkedlist->head; node; node = node->next) {
         if (comp(node))

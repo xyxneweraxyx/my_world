@@ -2,24 +2,58 @@
 ** EPITECH PROJECT, 2025
 ** my_world
 ** File description:
-** Main entry file.
+** 3D perspective rendering of the height mapoint->
 */
 
 #include "./../include/myworld.h"
 
-static sfVector2f get_vertex_pos(main_t *main, size_t x, size_t y)
+static vec3_t translate(main_t *main, vec3_t *point)
 {
-    sfVector2f vector = {0, 0};
+    render_t *r = &main->render;
+    vec3_t translate_vec = {0, 0, 0};
 
-    vector.x = x * main->render.zoom * 100;
-    vector.y = y * main->render.zoom * 100;
-    vector.x = vector.x + main->render.origin.x;
-    vector.y = vector.y + main->render.origin.y;
-    printf("xy is %zu %zu coords are %f %f\n", x, y, vector.x, vector.y);
-    return vector;
+    translate_vec.x = point->x - r->cam_x;
+    translate_vec.y = point->y - r->cam_y;
+    translate_vec.z = point->z - r->cam_z;
+    return translate_vec;
 }
 
-static texture_t *get_texture_from_height(main_t *main, float height)
+static vec3_t rotate_yaw(vec3_t *point, float yaw)
+{
+    vec3_t yaw_vec = {0, 0, 0};
+
+    yaw_vec.x = point->x * cosf(yaw) - point->z * sinf(yaw);
+    yaw_vec.y = point->y;
+    yaw_vec.z = point->x * sinf(yaw) + point->z * cosf(yaw);
+    return yaw_vec;
+}
+
+static vec3_t rotate_pitch(vec3_t *point, float pitch)
+{
+    vec3_t rotate_vec = {0, 0, 0};
+
+    rotate_vec.x = point->x;
+    rotate_vec.y = point->y * cosf(pitch) - point->z * sinf(pitch);
+    rotate_vec.z = point->y * sinf(pitch) + point->z * cosf(pitch);
+    return rotate_vec;
+}
+
+static sfVector2f project(main_t *main, vec3_t *world)
+{
+    sfVector2u win = sfRenderWindow_getSize(main->setfml->window);
+    vec3_t point = translate(main, world);
+
+    point = rotate_yaw(&point, main->render.yaw);
+    point = rotate_pitch(&point, main->render.pitch);
+    if (point.z <= 0.1f)
+        return (sfVector2f){-99999, -99999};
+    return (sfVector2f){
+        win.x / 2.0f + (point.x / point.z) * main->render.fov,
+        win.y / 2.0f - (point.y / point.z) * main->render.fov
+    };
+}
+
+static texture_t *get_texture(main_t *main, float height)
 {
     if (height < 0)
         return setfml_texturefromname(main->setfml, "grasstexture", false);
@@ -28,35 +62,54 @@ static texture_t *get_texture_from_height(main_t *main, float height)
     return setfml_texturefromname(main->setfml, "exit", false);
 }
 
-static void new_square(main_t *main, size_t x, size_t y)
+static bool create_points(main_t *main, size_t x, size_t y,
+    sfVector2f points[4])
 {
-    sfConvexShape *convexshape = sfConvexShape_create();
-    float height = main->render.height[y][x];
-    texture_t *texture = get_texture_from_height(main, height);
+    render_t *r = &main->render;
+    float t = r->zoom;
+    float heights[4] = {
+        r->height[y][x],
+        r->height[y][x + 1],
+        r->height[y + 1][x + 1],
+        r->height[y + 1][x]
+    };
 
-    if (!texture)
+    points[0] = project(main, &(vec3_t){x * t, heights[0], y * t});
+    points[1] = project(main, &(vec3_t){(x+1) * t, heights[1], y * t});
+    points[2] = project(main, &(vec3_t){(x+1) * t, heights[2], (y+1) * t});
+    points[3] = project(main, &(vec3_t){x * t, heights[3], (y+1) * t});
+    for (size_t i = 0; i < 4; i++)
+        if (points[i].x < -9000 || points[i].y < -9000)
+            return false;
+    return true;
+}
+
+static void draw_square(main_t *main, size_t x, size_t y)
+{
+    sfVector2f points[4] = {0};
+    sfConvexShape *shape = sfConvexShape_create();
+
+    if (!shape || !create_points(main, x, y, points))
         return;
-    printf("creating square\n");
-    sfConvexShape_setPointCount(convexshape, 4);
-    sfConvexShape_setPoint(convexshape, 0, get_vertex_pos(main, x, y));
-    sfConvexShape_setPoint(convexshape, 1, get_vertex_pos(main, x + 1, y));
-    sfConvexShape_setPoint(convexshape, 2, get_vertex_pos(main, x, y + 1));
-    sfConvexShape_setPoint(convexshape, 3, get_vertex_pos(main, x + 1, y + 1));
-    sfConvexShape_setOutlineColor(convexshape, (sfColor){0, 0, 0, 0});
-    sfConvexShape_setOutlineThickness(convexshape, 1);
-    sfConvexShape_setFillColor(convexshape, (sfColor){0, 255, 0, 1});
-    sfConvexShape_setPosition(convexshape, get_vertex_pos(main, x, y));
-    sfRenderWindow_drawConvexShape(main->setfml->window, convexshape, NULL);
-    sfConvexShape_destroy(convexshape);
+    sfConvexShape_setPointCount(shape, 4);
+    sfConvexShape_setTexture(shape,
+        get_texture(main, main->render.height[y][x])->texture, sfFalse);
+    for (size_t i = 0; i < 4; i++)
+        sfConvexShape_setPoint(shape, i, points[i]);
+    sfConvexShape_setOutlineColor(shape, (sfColor){0, 0, 0, 255});
+    sfConvexShape_setOutlineThickness(shape, 1);
+    sfConvexShape_setFillColor(shape, (sfColor){255, 255, 255, 255});
+    sfRenderWindow_drawConvexShape(main->setfml->window, shape, NULL);
+    sfConvexShape_destroy(shape);
 }
 
 size_t draw(setfml_t *setfml, void *userdata)
 {
     main_t *main = (main_t *)setfml->userdata;
+    render_t *r = &main->render;
 
-    for (size_t y = 0; y < 1; y++) {
-        for (size_t x = 0; x < 1; x++)
-            new_square(main, x, y);
-    }
+    for (size_t y = r->square_amount_y - 2; y < r->square_amount_y; y--)
+        for (size_t x = 0; x < r->square_amount_x - 1; x++)
+            draw_square(main, x, y);
     return (size_t)EXIT_SUCC;
 }

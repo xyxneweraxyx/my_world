@@ -40,8 +40,7 @@ static size_t buttonfml_mousemove(setfml_t *setfml, void *userdata)
         if (is_mouse_on_button(button, (size_t)setfml->event.mouseMove.x,
             (size_t)setfml->event.mouseMove.y) == (size_t)BUTTONFML_FAIL)
             continue;
-        if (button->state == BUTTON_IDLE)
-            button->state = BUTTON_HOVERED;
+        button->state = BUTTON_HOVERED;
         if (button->textures->hover[0]) {
             str_cat(text_name, 2, button->name, "_hover");
             setfml_spritechangetexture(setfml,

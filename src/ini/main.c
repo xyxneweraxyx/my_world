@@ -38,16 +38,20 @@ static size_t ini_sprites(main_t *main)
 
 static void ini_values(main_t *main)
 {
-    main->state = MYWORLD_EDITOR;
-    main->render.origin.x = 300;
-    main->render.origin.y = 300;
-    main->render.zoom = 1;
+        main->state = MYWORLD_EDITOR;
+    main->render.zoom = 50;
     main->render.square_amount_x = 32;
     main->render.square_amount_y = 32;
+    main->render.cam_x = (main->render.square_amount_x / 2.0f) * main->render.zoom;
+    main->render.cam_y = 700;
+    main->render.cam_z = -500;
+    main->render.yaw = 0;
+    main->render.pitch = 0.6f;
+    main->render.fov = 700;
     main->render.height = c_alloc(sizeof(float *),
         main->render.square_amount_y, main->alloc);
     for (size_t i = 0; i < main->render.square_amount_y; i++)
-        main->render.height[i] = c_alloc(sizeof(float *),
+        main->render.height[i] = c_alloc(sizeof(float),
             main->render.square_amount_x, main->alloc);
 }
 

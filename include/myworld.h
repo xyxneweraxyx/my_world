@@ -15,6 +15,7 @@
     #include <stdint.h>
     #include <stdlib.h>
     #include <unistd.h>
+    #include <math.h>
 
     // Includes (CSFML)
     #include <SFML/Audio.h>
@@ -45,6 +46,9 @@
     #define AST_GRASSTEXTURE "./assets/images/grasstexture.png"
     #define AST_ROCKTEXTURE "./assets/images/rocktexture.jpeg"
 
+    // Hardcoded values
+    #define CAM_SPEED 10
+
 // Typedefs
 
 typedef enum myworld_state {
@@ -61,10 +65,22 @@ typedef struct csfml {
 typedef struct render {
     float **height;
     sfVector2f origin;
+    float yaw;
     float zoom;
+    float cam_x;
+    float cam_y;
+    float cam_z;
+    float pitch;
+    float fov;
     size_t square_amount_x;
     size_t square_amount_y;
 } render_t;
+
+typedef struct vec3 {
+    float x;
+    float y;
+    float z;
+} vec3_t;
 
 typedef struct main {
     c_alloc_t *alloc;
@@ -81,5 +97,7 @@ size_t ini_csfml(main_t *main);
 size_t ini_buttons(main_t *main);
 size_t ini_callbacks(main_t *main);
 size_t draw(setfml_t *setfml, void *userdata);
+size_t ini_draw_callbacks(setfml_t *setfml, void *userdata);
+size_t ini_camera_callbacks(main_t *main, void *userdata);
 
 #endif

@@ -150,7 +150,7 @@ size_t buttonfml_buttondestroy(buttonfml_t *buttonfml, char name[BUTTON_NAME])
     node_t *node = node_from_name(buttonfml, name);
     button_t *button = NULL;
 
-    if (!buttonfml || !name[0] || node)
+    if (!buttonfml || !name[0] || !node)
         return (size_t)BUTTONFML_FAIL;
     button = (button_t *)node->data;
     setfml_spritedel(buttonfml->setfml, button->button->name);

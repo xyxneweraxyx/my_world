@@ -35,13 +35,13 @@ void buttonfml_destroy(buttonfml_t *buttonfml)
     for (node_t *node = buttonfml->buttons->head; node; node = node->next) {
         data = (button_t *)node->data;
         str_cat(t_name, 2, data->name, "_idle");
-        if (!setfml_texturefromname(buttonfml->setfml, t_name, true))
+        if (setfml_texturefromname(buttonfml->setfml, t_name, true))
             setfml_texturedel(buttonfml->setfml, t_name);
         str_cat(t_name, 2, data->name, "_hover");
-        if (!setfml_texturefromname(buttonfml->setfml, t_name, true))
+        if (setfml_texturefromname(buttonfml->setfml, t_name, true))
             setfml_texturedel(buttonfml->setfml, t_name);
         str_cat(t_name, 2, data->name, "_click");
-        if (!setfml_texturefromname(buttonfml->setfml, t_name, true))
+        if (setfml_texturefromname(buttonfml->setfml, t_name, true))
             setfml_texturedel(buttonfml->setfml, t_name);
         if (data->button)
             setfml_spritedel(buttonfml->setfml, data->button->name);
