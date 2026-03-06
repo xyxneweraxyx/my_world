@@ -44,10 +44,15 @@
     #define AST_SETTING "./assets/images/setting.png"
     #define AST_EDITORBACKGROUND "./assets/images/editorbackground.jpg"
     #define AST_GRASSTEXTURE "./assets/images/grasstexture.png"
-    #define AST_ROCKTEXTURE "./assets/images/rocktexture.jpeg"
+    #define AST_ROCKTEXTURE "./assets/images/rocktexture.png"
+    #define AST_DIRTTEXTURE "./assets/images/dirttexture.png"
+    #define AST_RAISE "./assets/images/raise.png"
+    #define AST_LOWER "./assets/images/lower.png"
+    #define AST_RESET "./assets/images/reset.png"
 
     // Hardcoded values
     #define CAM_SPEED 10
+    #define RAISE_AMOUNT 5.0f
 
 // Typedefs
 
@@ -56,6 +61,12 @@ typedef enum myworld_state {
     MYWORLD_EDITOR,
     MYWORLD_SETTING,
 } myworld_state_t;
+
+typedef enum edit_state {
+    EDIT_RAISE,
+    EDIT_LOWER,
+    EDIT_RESET,
+} edit_state_t;
 
 typedef struct csfml {
     sfRenderWindow *window;
@@ -75,6 +86,10 @@ typedef struct render {
     float fov;
     size_t square_amount_x;
     size_t square_amount_y;
+    size_t radius;
+    bool **in_radius;
+    sfVector2f brush;
+
 } render_t;
 
 typedef struct vec3 {
@@ -90,6 +105,7 @@ typedef struct main {
     render_t render;
     csfml_t csfml;
     myworld_state_t state;
+    edit_state_t edit_state;
 } main_t;
 
 // Functions
@@ -100,5 +116,6 @@ size_t ini_callbacks(main_t *main);
 size_t draw(setfml_t *setfml, void *userdata);
 size_t ini_draw_callbacks(setfml_t *setfml, void *userdata);
 size_t ini_camera_callbacks(setfml_t *setfml, void *userdata);
+size_t update_brush(setfml_t *setfml, void *userdata);
 
 #endif

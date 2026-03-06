@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** my_world
 ** File description:
-** 3D perspective rendering of the height mapoint->
+** 3D perspective rendering of the height map
 */
 
 #include "./../include/myworld.h"
@@ -56,10 +56,10 @@ static sfVector2f project(main_t *main, vec3_t *world)
 static texture_t *get_texture(main_t *main, float height)
 {
     if (height < 0)
-        return setfml_texturefromname(main->setfml, "grasstexture", false);
-    if (height < 20)
         return setfml_texturefromname(main->setfml, "rocktexture", false);
-    return setfml_texturefromname(main->setfml, "exit", false);
+    if (height < 100)
+        return setfml_texturefromname(main->setfml, "dirttexture", false);
+    return setfml_texturefromname(main->setfml, "grasstexture", false);
 }
 
 static bool create_points(main_t *main, size_t x, size_t y,
@@ -88,6 +88,9 @@ static void draw_square(main_t *main, size_t x, size_t y)
 {
     sfVector2f points[4] = {0};
     sfConvexShape *shape = sfConvexShape_create();
+    float avg = (main->render.height[y][x] + main->render.height[y][x + 1] +
+        main->render.height[y + 1][x + 1] + main->render.height[y + 1][x]) / 4;
+    int cl = 255 - avg;
 
     if (!shape || !create_points(main, x, y, points))
         return;
@@ -98,7 +101,7 @@ static void draw_square(main_t *main, size_t x, size_t y)
         sfConvexShape_setPoint(shape, i, points[i]);
     sfConvexShape_setOutlineColor(shape, (sfColor){0, 0, 0, 255});
     sfConvexShape_setOutlineThickness(shape, 1);
-    sfConvexShape_setFillColor(shape, (sfColor){255, 255, 255, 255});
+    sfConvexShape_setFillColor(shape, (sfColor){cl, cl, cl, 255});
     sfRenderWindow_drawConvexShape(main->setfml->window, shape, NULL);
     sfConvexShape_destroy(shape);
 }

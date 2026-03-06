@@ -19,7 +19,7 @@ size_t click_create_map(setfml_t *setfml, void *userdata)
 size_t click_exit(setfml_t *setfml, void *userdata)
 {
     setfml_windowclose(setfml);
-    return (size_t)EXIT_SUCC;
+    return (size_t)SETFML_WINDOWCLOSING;
 }
 
 size_t click_setting(setfml_t *setfml, void *userdata)

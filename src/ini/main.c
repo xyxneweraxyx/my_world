@@ -17,6 +17,7 @@ static void ini_textures(main_t *main)
     setfml_textureadd(main->setfml, "editorbackground", AST_EDITORBACKGROUND);
     setfml_textureadd(main->setfml, "grasstexture", AST_GRASSTEXTURE);
     setfml_textureadd(main->setfml, "rocktexture", AST_ROCKTEXTURE);
+    setfml_textureadd(main->setfml, "dirttexture", AST_DIRTTEXTURE);
 }
 
 static size_t ini_sprites(main_t *main)
@@ -38,20 +39,25 @@ static size_t ini_sprites(main_t *main)
 
 static void ini_values(main_t *main)
 {
-        main->state = MYWORLD_MENU;
+    main->state = MYWORLD_MENU;
     main->render.zoom = 50;
     main->render.square_amount_x = 32;
     main->render.square_amount_y = 32;
     main->render.cam_x = (main->render.square_amount_x / 2.0f) * main->render.zoom;
     main->render.cam_y = 700;
     main->render.cam_z = -500;
-    main->render.yaw = 0;
     main->render.pitch = 0.6f;
     main->render.fov = 700;
     main->render.height = c_alloc(sizeof(float *),
         main->render.square_amount_y, main->alloc);
     for (size_t i = 0; i < main->render.square_amount_y; i++)
         main->render.height[i] = c_alloc(sizeof(float),
+            main->render.square_amount_x, main->alloc);
+    main->render.radius = 3;
+    main->render.in_radius = c_alloc(sizeof(bool *),
+        main->render.square_amount_y, main->alloc);
+    for (size_t i = 0; i < main->render.square_amount_y; i++)
+        main->render.in_radius[i] = c_alloc(sizeof(bool),
             main->render.square_amount_x, main->alloc);
 }
 
